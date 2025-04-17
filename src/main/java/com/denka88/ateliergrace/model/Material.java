@@ -2,6 +2,8 @@ package com.denka88.ateliergrace.model;
 
 import jakarta.persistence.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "materials")
 public class Material {
@@ -14,13 +16,17 @@ public class Material {
 
     private int value;
 
+    @ManyToMany
+    private Set<Order> orders;
+
     public Material() {
     }
 
-    public Material(Long id, String name, int value) {
+    public Material(Long id, String name, int value, Set<Order> orders) {
         this.id = id;
         this.name = name;
         this.value = value;
+        this.orders = orders;
     }
 
     public Long getId() {
@@ -45,5 +51,13 @@ public class Material {
 
     public void setValue(int value) {
         this.value = value;
+    }
+
+    public Set<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(Set<Order> orders) {
+        this.orders = orders;
     }
 }

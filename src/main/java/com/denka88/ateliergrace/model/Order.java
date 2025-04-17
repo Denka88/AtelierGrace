@@ -23,10 +23,13 @@ public class Order {
     private float cost;
     private Status status;
 
+    @ManyToMany
+    private Set<Material> materials;
+
     @OneToMany(mappedBy = "order")
     private Set<OrderEmployee> orders;
 
-    public Order(Long id, Client client, String orderName, String type, LocalDate created, float cost, Status status, Set<OrderEmployee> orders) {
+    public Order(Long id, Client client, String orderName, String type, LocalDate created, float cost, Status status, Set<Material> materials, Set<OrderEmployee> orders) {
         this.id = id;
         this.client = client;
         this.orderName = orderName;
@@ -34,6 +37,7 @@ public class Order {
         this.created = created;
         this.cost = cost;
         this.status = status;
+        this.materials = materials;
         this.orders = orders;
     }
 
@@ -103,5 +107,13 @@ public class Order {
 
     public void setOrders(Set<OrderEmployee> orders) {
         this.orders = orders;
+    }
+
+    public Set<Material> getMaterials() {
+        return materials;
+    }
+
+    public void setMaterials(Set<Material> materials) {
+        this.materials = materials;
     }
 }
