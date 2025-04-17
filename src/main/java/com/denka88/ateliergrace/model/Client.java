@@ -1,36 +1,32 @@
-﻿package com.denka88.ateliergrace.model;
+package com.denka88.ateliergrace.model;
 
 import jakarta.persistence.*;
 
-import java.util.Set;
-
 @Entity
-@Table(name = "employees")
-public class Employee {
-    
+@Table(name = "clients")
+public class Client {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    private String post;
 
     private String name;
     private String surname;
     private String patronymic;
 
-    @OneToMany(mappedBy = "employee")
-    private Set<OrderEmployee> orders;
+    private String login;
+    private String password;
 
-    public Employee() {
+    public Client() {
     }
 
-    public Employee(Long id, String post, String name, String surname, String patronymic, Set<OrderEmployee> orders) {
+    public Client(Long id, String name, String surname, String patronymic, String login, String password) {
         this.id = id;
-        this.post = post;
         this.name = name;
         this.surname = surname;
         this.patronymic = patronymic;
-        this.orders = orders;
+        this.login = login;
+        this.password = password;
     }
 
     public Long getId() {
@@ -39,14 +35,6 @@ public class Employee {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getPost() {
-        return post;
-    }
-
-    public void setPost(String post) {
-        this.post = post;
     }
 
     public String getName() {
@@ -73,16 +61,19 @@ public class Employee {
         this.patronymic = patronymic;
     }
 
-    @Override
-    public String toString() {
-        return surname + " " + name + " " + patronymic;
+    public String getLogin() {
+        return login;
     }
 
-    public Set<OrderEmployee> getOrders() {
-        return orders;
+    public void setLogin(String login) {
+        this.login = login;
     }
 
-    public void setOrders(Set<OrderEmployee> orders) {
-        this.orders = orders;
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

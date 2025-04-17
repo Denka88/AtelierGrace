@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 import lombok.Data; // Или напишите геттеры/сеттеры вручную
 
 @Entity
-@Table(name = "Auth", uniqueConstraints = {
+@Table(orderName = "Auth", uniqueConstraints = {
     @UniqueConstraint(columnNames = "login") // Логин должен быть уникальным
 })
 @Data // Lombok (геттеры, сеттеры, toString)
@@ -126,7 +126,7 @@ public class SecurityConfig {
             return User.builder()
                 .username(auth.getLogin())
                 .password(auth.getPasswordHash())
-                .roles(auth.getUserType().name())
+                .roles(auth.getUserType().orderName())
                 .build();
         };
     }
