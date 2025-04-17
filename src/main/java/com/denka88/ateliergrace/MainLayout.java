@@ -1,5 +1,6 @@
 package com.denka88.ateliergrace;
 
+import com.denka88.ateliergrace.view.MainView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -13,6 +14,7 @@ import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.Layout;
+import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.PermitAll;
 
@@ -21,56 +23,57 @@ import jakarta.annotation.security.PermitAll;
 public class MainLayout extends AppLayout {
 
     public MainLayout() {
-        DrawerToggle toggle = new DrawerToggle();
-
-        H1 title = new H1("<Библиотека>");
+        H1 title = new H1("Грация");
         title.getStyle().set("font-size", "var(--lumo-font-size-l)")
-                .set("margin", "0");
+                .set("left", "var(--lumo-space-l)").set("margin", "0")
+                .set("position", "absolute");
 
-        HorizontalLayout navbarRight = new HorizontalLayout();
-        navbarRight.setAlignItems(FlexComponent.Alignment.CENTER);
-        navbarRight.getStyle().set("margin-left", "auto");
+        HorizontalLayout navigation = getNavigation();
+        navigation.getElement();
 
-        Button logout = new Button("Выйти", e -> {
-            UI.getCurrent().navigate("logout");
-        });
-        logout.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
-        logout.getStyle().set("margin-right", "5px");
-
-        /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()
-                && !(authentication.getPrincipal() instanceof String)) {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-            Span username = new Span(userDetails.getUsername());
-            username.getStyle()
-                    .set("font-size", "var(--lumo-font-size-m)")
-                    .set("padding", "0 1rem");
-
-            navbarRight.add(username);
-        }*/
-
-        navbarRight.add(logout);
-
-        SideNav nav = getSideNav();
-        Scroller scroller = new Scroller(nav);
-        scroller.setClassName(LumoUtility.Padding.SMALL);
-
-        addToDrawer(scroller);
-
-        addToNavbar(toggle, title, navbarRight);
-
+        addToNavbar(title, navigation);
     }
 
-    private SideNav getSideNav() {
-        SideNav sideNav = new SideNav();
-        sideNav.addItem(
-                new SideNavItem("Авторы", "/authors", VaadinIcon.USERS.create()),
-                new SideNavItem("Книги", "/books", VaadinIcon.BOOK.create()),
-                new SideNavItem("Города", "/cities", VaadinIcon.MAP_MARKER.create()),
-                new SideNavItem("Жанры", "/genres", VaadinIcon.CLIPBOARD_TEXT.create()),
-                new SideNavItem("Издатели", "/publishers", VaadinIcon.GROUP.create())
-        );
-        return sideNav;
+    private HorizontalLayout getNavigation() {
+        HorizontalLayout navigation = new HorizontalLayout();
+        navigation.addClassNames(LumoUtility.JustifyContent.CENTER,
+                LumoUtility.Gap.SMALL, LumoUtility.Height.MEDIUM,
+                LumoUtility.Width.FULL);
+        navigation.add(createLink("Заказы"), createLink("Клиенты"),
+                createLink("Поставщики"), createLink("Материалы"), createLink("Сотрудники"));
+        return navigation;
     }
+
+    private RouterLink createLink(String viewName) {
+        RouterLink link = new RouterLink();
+        link.add(viewName);
+        switch (viewName){
+            case "Заказы":
+                link.setRoute(MainView.class);
+                break;
+            case "Клиенты":
+                link.setRoute(MainView.class);
+                break;
+            case "Поставщики":
+                link.setRoute(MainView.class);
+                break;
+            case "Материалы":
+                link.setRoute(MainView.class);
+                break;
+            case "Сотрудники":
+                link.setRoute(MainView.class);
+                break;
+            default:
+                link.setRoute(MainView.class);
+        }
+
+        link.addClassNames(LumoUtility.Display.FLEX,
+                LumoUtility.AlignItems.CENTER,
+                LumoUtility.Padding.Horizontal.MEDIUM,
+                LumoUtility.TextColor.SECONDARY, LumoUtility.FontWeight.MEDIUM);
+        link.getStyle().set("text-decoration", "none");
+
+        return link;
+    }
+
 }
