@@ -19,7 +19,7 @@ public class Order {
 
     private String orderName;
     private String type;
-    private LocalDate created;
+    private LocalDate orderDate;
     private float cost;
     private Status status;
 
@@ -29,12 +29,12 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private Set<OrderEmployee> orders;
 
-    public Order(Long id, Client client, String orderName, String type, LocalDate created, float cost, Status status, Set<Material> materials, Set<OrderEmployee> orders) {
+    public Order(Long id, Client client, String orderName, String type, LocalDate orderDate, float cost, Status status, Set<Material> materials, Set<OrderEmployee> orders) {
         this.id = id;
         this.client = client;
         this.orderName = orderName;
         this.type = type;
-        this.created = created;
+        this.orderDate = orderDate;
         this.cost = cost;
         this.status = status;
         this.materials = materials;
@@ -77,12 +77,12 @@ public class Order {
         this.type = type;
     }
 
-    public LocalDate getCreated() {
-        return created;
+    public LocalDate getOrderDate() {
+        return orderDate;
     }
 
-    public void setCreated(LocalDate created) {
-        this.created = created;
+    public void setOrderDate(LocalDate orderDate) {
+        this.orderDate = orderDate;
     }
 
     public float getCost() {

@@ -18,15 +18,19 @@ public class Material {
 
     @ManyToMany
     private Set<Order> orders;
+    
+    @OneToMany
+    private Set<Organization> organizations;
 
     public Material() {
     }
 
-    public Material(Long id, String name, int value, Set<Order> orders) {
+    public Material(Long id, String name, int value, Set<Order> orders, Set<Organization> organizations) {
         this.id = id;
         this.name = name;
         this.value = value;
         this.orders = orders;
+        this.organizations = organizations;
     }
 
     public Long getId() {
@@ -59,5 +63,13 @@ public class Material {
 
     public void setOrders(Set<Order> orders) {
         this.orders = orders;
+    }
+
+    public Set<Organization> getOrganizations() {
+        return organizations;
+    }
+
+    public void setOrganizations(Set<Organization> organizations) {
+        this.organizations = organizations;
     }
 }
