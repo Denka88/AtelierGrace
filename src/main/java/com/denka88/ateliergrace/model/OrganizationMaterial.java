@@ -1,4 +1,4 @@
-﻿package com.denka88.ateliergrace.model;
+package com.denka88.ateliergrace.model;
 
 
 import jakarta.persistence.EmbeddedId;

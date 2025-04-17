@@ -3,10 +3,12 @@ package com.denka88.ateliergrace.impl;
 import com.denka88.ateliergrace.model.Client;
 import com.denka88.ateliergrace.repo.ClientRepo;
 import com.denka88.ateliergrace.service.ClientService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class ClientServiceImpl implements ClientService {
 
     private final ClientRepo clientRepo;

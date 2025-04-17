@@ -3,7 +3,7 @@ package com.denka88.ateliergrace.model;
 public enum Status {
 
     PROGRESS("Выполняется"),
-    COMPLITED("Выполнен");
+    COMPLETED("Выполнен");
 
     Status(String status) {
 

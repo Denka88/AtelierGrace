@@ -3,10 +3,12 @@ package com.denka88.ateliergrace.impl;
 import com.denka88.ateliergrace.model.Material;
 import com.denka88.ateliergrace.repo.MaterialRepo;
 import com.denka88.ateliergrace.service.Materialservice;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class MaterialserviceImpl implements Materialservice {
 
     private final MaterialRepo materialRepo;
