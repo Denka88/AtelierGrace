@@ -15,21 +15,16 @@ public class Client {
     private String patronymic;
 
     private String phone;
-    
-    private String login;
-    private String password;
 
     public Client() {
     }
 
-    public Client(Long id, String name, String surname, String patronymic, String phone, String login, String password) {
+    public Client(Long id, String name, String surname, String patronymic, String phone) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.patronymic = patronymic;
         this.phone = phone;
-        this.login = login;
-        this.password = password;
     }
 
     public Long getId() {
@@ -62,22 +57,6 @@ public class Client {
 
     public void setPatronymic(String patronymic) {
         this.patronymic = patronymic;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getPhone() {

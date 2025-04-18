@@ -1,6 +1,7 @@
 package com.denka88.ateliergrace;
 
 import com.denka88.ateliergrace.view.MainView;
+import com.denka88.ateliergrace.view.TestView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -15,23 +16,29 @@ import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.Layout;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
+import com.vaadin.flow.spring.security.AuthenticationContext;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.PermitAll;
 
 @Layout
-@PermitAll
+@AnonymousAllowed
 public class MainLayout extends AppLayout {
 
-    public MainLayout() {
+    public MainLayout(AuthenticationContext authenticationContext) {
         H1 title = new H1("Грация");
         title.getStyle().set("font-size", "var(--lumo-font-size-l)")
                 .set("left", "var(--lumo-space-l)").set("margin", "0")
-                .set("position", "absolute");
+                .set("position", "absolute").set("cursor", "pointer");
+        title.addClickListener(e -> UI.getCurrent().navigate("/"));
 
         HorizontalLayout navigation = getNavigation();
         navigation.getElement();
-
-        addToNavbar(title, navigation);
+        
+        Button logout = new Button("Logout", e -> authenticationContext.logout());
+        logout.getStyle().set("margin", "5");
+        
+        addToNavbar(title, navigation, logout);
     }
 
     private HorizontalLayout getNavigation() {
@@ -49,7 +56,7 @@ public class MainLayout extends AppLayout {
         link.add(viewName);
         switch (viewName){
             case "Заказы":
-                link.setRoute(MainView.class);
+                link.setRoute(TestView.class);
                 break;
             case "Клиенты":
                 link.setRoute(MainView.class);
