@@ -9,8 +9,9 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import jakarta.annotation.security.PermitAll;
 
-@Route(value = "", layout = MainLayout.class)
-@RouteAlias("main")
+@Route(value = "main", layout = MainLayout.class)
+@RouteAlias("index")
+@RouteAlias("")
 @PageTitle("MAIN")
 @PermitAll
 public class MainView extends VerticalLayout {

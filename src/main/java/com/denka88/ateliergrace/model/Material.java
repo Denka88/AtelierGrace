@@ -2,6 +2,7 @@ package com.denka88.ateliergrace.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -20,12 +21,12 @@ public class Material {
     private Set<Order> orders;
     
     @OneToMany
-    private Set<Organization> organizations;
+    private List<Organization> organizations;
 
     public Material() {
     }
 
-    public Material(Long id, String name, int value, Set<Order> orders, Set<Organization> organizations) {
+    public Material(Long id, String name, int value, Set<Order> orders, List<Organization> organizations) {
         this.id = id;
         this.name = name;
         this.value = value;
@@ -65,11 +66,11 @@ public class Material {
         this.orders = orders;
     }
 
-    public Set<Organization> getOrganizations() {
+    public List<Organization> getOrganizations() {
         return organizations;
     }
 
-    public void setOrganizations(Set<Organization> organizations) {
+    public void setOrganizations(List<Organization> organizations) {
         this.organizations = organizations;
     }
 }

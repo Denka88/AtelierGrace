@@ -2,7 +2,7 @@ package com.denka88.ateliergrace.model;
 
 import jakarta.persistence.*;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "organizations")
@@ -16,12 +16,12 @@ public class Organization {
     private String address;
     
     @OneToMany
-    private Set<Material> materials;
+    private List<Material> materials;
 
     public Organization() {
     }
 
-    public Organization(Long id, String name, String address, Set<Material> materials) {
+    public Organization(Long id, String name, String address, List<Material> materials) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -52,11 +52,11 @@ public class Organization {
         this.address = address;
     }
 
-    public Set<Material> getMaterials() {
+    public List<Material> getMaterials() {
         return materials;
     }
 
-    public void setMaterials(Set<Material> materials) {
+    public void setMaterials(List<Material> materials) {
         this.materials = materials;
     }
 }

@@ -1,9 +1,6 @@
 package com.denka88.ateliergrace;
 
-import com.denka88.ateliergrace.view.ClientsView;
-import com.denka88.ateliergrace.view.EmployeesView;
-import com.denka88.ateliergrace.view.MainView;
-import com.denka88.ateliergrace.view.TestView;
+import com.denka88.ateliergrace.view.*;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -32,7 +29,7 @@ public class MainLayout extends AppLayout {
         title.getStyle().set("font-size", "var(--lumo-font-size-l)")
                 .set("left", "var(--lumo-space-l)").set("margin", "0")
                 .set("position", "absolute").set("cursor", "pointer");
-        title.addClickListener(e -> UI.getCurrent().navigate("/"));
+        title.addClickListener(e -> UI.getCurrent().navigate("/main"));
 
         HorizontalLayout navigation = getNavigation();
         navigation.getElement();
@@ -64,10 +61,10 @@ public class MainLayout extends AppLayout {
                     link.setRoute(ClientsView.class);
                     break;
                 case "Поставщики":
-                    link.setRoute(MainView.class);
+                    link.setRoute(OrganizationsView.class);
                     break;
                 case "Материалы":
-                    link.setRoute(MainView.class);
+                    link.setRoute(MaterialsView.class);
                     break;
                 case "Сотрудники":
                     link.setRoute(EmployeesView.class);

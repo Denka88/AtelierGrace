@@ -5,7 +5,7 @@ import com.denka88.ateliergrace.model.Material;
 import java.util.List;
 import java.util.Optional;
 
-public interface Materialservice {
+public interface MaterialService {
 
     List<Material> findAll();
 
