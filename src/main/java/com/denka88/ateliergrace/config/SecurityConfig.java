@@ -23,6 +23,8 @@ public class SecurityConfig extends VaadinWebSecurity {
                 .requestMatchers(antMatchers("/")).permitAll()
                 .requestMatchers(antMatchers("/main")).permitAll()
                 .requestMatchers(antMatchers("/test")).permitAll()
+                .requestMatchers(antMatchers("/login")).permitAll()
+                .requestMatchers(antMatchers("/employee-registration")).hasRole("ADMIN")
         );
         
         super.configure(http);

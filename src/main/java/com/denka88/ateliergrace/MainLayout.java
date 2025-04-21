@@ -1,5 +1,7 @@
 package com.denka88.ateliergrace;
 
+import com.denka88.ateliergrace.view.ClientsView;
+import com.denka88.ateliergrace.view.EmployeesView;
 import com.denka88.ateliergrace.view.MainView;
 import com.denka88.ateliergrace.view.TestView;
 import com.vaadin.flow.component.UI;
@@ -59,7 +61,7 @@ public class MainLayout extends AppLayout {
                     link.setRoute(TestView.class);
                     break;
                 case "Клиенты":
-                    link.setRoute(MainView.class);
+                    link.setRoute(ClientsView.class);
                     break;
                 case "Поставщики":
                     link.setRoute(MainView.class);
@@ -68,7 +70,7 @@ public class MainLayout extends AppLayout {
                     link.setRoute(MainView.class);
                     break;
                 case "Сотрудники":
-                    link.setRoute(MainView.class);
+                    link.setRoute(EmployeesView.class);
                     break;
                 default:
                     link.setRoute(MainView.class);
