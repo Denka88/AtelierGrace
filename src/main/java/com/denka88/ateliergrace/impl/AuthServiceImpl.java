@@ -21,12 +21,10 @@ public class AuthServiceImpl implements AuthService {
 
     private final AuthRepo authRepo;
     private final BCryptPasswordEncoder passwordEncoder;
-//    private final AuthenticationManager authenticationManager;
 
-    public AuthServiceImpl(AuthRepo authRepo, BCryptPasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    public AuthServiceImpl(AuthRepo authRepo, BCryptPasswordEncoder passwordEncoder) {
         this.authRepo = authRepo;
         this.passwordEncoder = passwordEncoder;
-//        this.authenticationManager = authenticationManager;
     }
 
     @Override
@@ -48,14 +46,6 @@ public class AuthServiceImpl implements AuthService {
     public void delete(Long userId) {
         authRepo.deleteById(userId);
     }
-
-    /*@Override
-    public void authenticate(String login, String password) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(login, password)
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }*/
 
     @Override
     public Optional<Auth> findByLogin(String login) {

@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class MaterialserviceImpl implements Materialservice {
+public class MaterialServiceImpl implements Materialservice {
 
     private final MaterialRepo materialRepo;
 
-    public MaterialserviceImpl(MaterialRepo materialRepo) {
+    public MaterialServiceImpl(MaterialRepo materialRepo) {
         this.materialRepo = materialRepo;
     }
 

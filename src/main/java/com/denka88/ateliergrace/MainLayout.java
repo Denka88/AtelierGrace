@@ -36,7 +36,7 @@ public class MainLayout extends AppLayout {
         navigation.getElement();
         
         Button logout = new Button("Logout", e -> authenticationContext.logout());
-        logout.getStyle().set("margin", "5");
+        logout.getStyle().set("margin-right", "5px");
         
         addToNavbar(title, navigation, logout);
     }
@@ -54,26 +54,25 @@ public class MainLayout extends AppLayout {
     private RouterLink createLink(String viewName) {
         RouterLink link = new RouterLink();
         link.add(viewName);
-        switch (viewName){
-            case "Заказы":
-                link.setRoute(TestView.class);
-                break;
-            case "Клиенты":
-                link.setRoute(MainView.class);
-                break;
-            case "Поставщики":
-                link.setRoute(MainView.class);
-                break;
-            case "Материалы":
-                link.setRoute(MainView.class);
-                break;
-            case "Сотрудники":
-                link.setRoute(MainView.class);
-                break;
-            default:
-                link.setRoute(MainView.class);
-        }
-
+            switch (viewName){
+                case "Заказы":
+                    link.setRoute(TestView.class);
+                    break;
+                case "Клиенты":
+                    link.setRoute(MainView.class);
+                    break;
+                case "Поставщики":
+                    link.setRoute(MainView.class);
+                    break;
+                case "Материалы":
+                    link.setRoute(MainView.class);
+                    break;
+                case "Сотрудники":
+                    link.setRoute(MainView.class);
+                    break;
+                default:
+                    link.setRoute(MainView.class);
+            }
         link.addClassNames(LumoUtility.Display.FLEX,
                 LumoUtility.AlignItems.CENTER,
                 LumoUtility.Padding.Horizontal.MEDIUM,

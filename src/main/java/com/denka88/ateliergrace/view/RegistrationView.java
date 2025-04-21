@@ -71,9 +71,10 @@ public class RegistrationView extends VerticalLayout {
                 registerButton
         );
         form.setResponsiveSteps(
-                new FormLayout.ResponsiveStep("0", 1),
-                new FormLayout.ResponsiveStep("500px", 2)
+                new FormLayout.ResponsiveStep("0", 1)
         );
+        form.setWidth("30%");
+        form.getStyle().set("margin", "auto");
         add(form);
         setAlignItems(Alignment.CENTER);
     }

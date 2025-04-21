@@ -11,8 +11,6 @@ public interface AuthService {
     
     void delete(Long userId);
     
-//    void authenticate(String login, String password);
-    
     Optional<Auth> findByLogin(String login);
     
 }

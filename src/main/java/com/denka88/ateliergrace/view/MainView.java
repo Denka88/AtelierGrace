@@ -1,5 +1,6 @@
 package com.denka88.ateliergrace.view;
 
+import com.denka88.ateliergrace.MainLayout;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Push;
@@ -8,7 +9,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import jakarta.annotation.security.PermitAll;
 
-@Route("")
+@Route(value = "", layout = MainLayout.class)
 @RouteAlias("main")
 @PageTitle("MAIN")
 @PermitAll
