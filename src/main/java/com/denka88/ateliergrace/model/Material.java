@@ -20,8 +20,10 @@ public class Material {
     @ManyToMany
     private Set<Order> orders;
     
+/*
     @OneToMany
     private List<Organization> organizations;
+*/
 
     public Material() {
     }
@@ -31,7 +33,7 @@ public class Material {
         this.name = name;
         this.value = value;
         this.orders = orders;
-        this.organizations = organizations;
+//        this.organizations = organizations;
     }
 
     public Long getId() {
@@ -66,11 +68,11 @@ public class Material {
         this.orders = orders;
     }
 
-    public List<Organization> getOrganizations() {
+    /*public List<Organization> getOrganizations() {
         return organizations;
     }
 
     public void setOrganizations(List<Organization> organizations) {
         this.organizations = organizations;
-    }
+    }*/
 }

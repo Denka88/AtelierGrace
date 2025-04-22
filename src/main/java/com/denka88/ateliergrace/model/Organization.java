@@ -15,8 +15,8 @@ public class Organization {
     private String name;
     private String address;
     
-    @OneToMany
-    private List<Material> materials;
+    /*@OneToMany
+    private List<Material> materials;*/
 
     public Organization() {
     }
@@ -25,7 +25,7 @@ public class Organization {
         this.id = id;
         this.name = name;
         this.address = address;
-        this.materials = materials;
+//        this.materials = materials;
     }
 
     public Long getId() {
@@ -52,11 +52,11 @@ public class Organization {
         this.address = address;
     }
 
-    public List<Material> getMaterials() {
+    /*public List<Material> getMaterials() {
         return materials;
     }
 
     public void setMaterials(List<Material> materials) {
         this.materials = materials;
-    }
+    }*/
 }

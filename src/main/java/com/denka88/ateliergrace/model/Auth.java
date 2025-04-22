@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "Auth", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "login") // Логин должен быть уникальным
+        @UniqueConstraint(columnNames = "login")
 })
 public class Auth {
     
@@ -15,15 +15,15 @@ public class Auth {
     @Column(nullable = false, length = 25)
     private String login;
 
-    @Column(nullable = false, length = 255)
-    private String passwordHash; // bcrypt/scrypt хеш
+    @Column(nullable = false)
+    private String passwordHash;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserType userType; // CLIENT, EMPLOYEE, ADMIN
+    private UserType userType;
 
     @Column(nullable = false)
-    private Long userId; // ID из таблицы Clients или Employees
+    private Long userId;
 
     public Auth() {}
 
