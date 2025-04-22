@@ -31,7 +31,7 @@ public class MainLayout extends AppLayout {
                 .set("position", "absolute").set("cursor", "pointer");
         title.addClickListener(e -> UI.getCurrent().navigate("/main"));
 
-        HorizontalLayout navigation = getNavigation();
+        HorizontalLayout navigation = getNavigation(authenticationContext);
         navigation.getElement();
         
         Button logout = new Button("Logout", e -> authenticationContext.logout());
@@ -40,13 +40,22 @@ public class MainLayout extends AppLayout {
         addToNavbar(title, navigation, logout);
     }
 
-    private HorizontalLayout getNavigation() {
+    private HorizontalLayout getNavigation(AuthenticationContext authenticationContext) {
         HorizontalLayout navigation = new HorizontalLayout();
         navigation.addClassNames(LumoUtility.JustifyContent.CENTER,
                 LumoUtility.Gap.SMALL, LumoUtility.Height.MEDIUM,
                 LumoUtility.Width.FULL);
-        navigation.add(createLink("Заказы"), createLink("Клиенты"),
-                createLink("Поставщики"), createLink("Материалы"), createLink("Сотрудники"));
+
+        if (authenticationContext.hasRole("ADMIN")){
+            navigation.add(createLink("Заказы"), createLink("Клиенты"),
+                    createLink("Поставщики"), createLink("Материалы"), createLink("Сотрудники"));
+        } else if (authenticationContext.hasRole("CLIENT")) {
+            navigation.add(createLink("Заказы"), createLink("Создать заказ"));
+        }
+        else {
+            navigation.add(createLink("Заказы"), createLink("Поставщики"), createLink("Материалы"));
+        }
+
         return navigation;
     }
 

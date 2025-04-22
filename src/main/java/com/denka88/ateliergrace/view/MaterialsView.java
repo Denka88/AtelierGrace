@@ -3,8 +3,11 @@ package com.denka88.ateliergrace.view;
 import com.denka88.ateliergrace.MainLayout;
 import com.denka88.ateliergrace.model.Material;
 import com.denka88.ateliergrace.service.MaterialService;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.popover.Popover;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
@@ -25,8 +28,31 @@ public class MaterialsView extends VerticalLayout {
         
         setupGrid();
         updateGrid();
-        
-        add(grid);
+
+        Button addButton = new Button("Добавить материал");
+
+        Popover addMaterial = new Popover();
+        addMaterial.setModal(true);
+        addMaterial.setBackdropVisible(true);
+        addMaterial.setWidth("210px");
+
+        TextField name = new TextField("Название");
+        TextField value = new TextField("На складе");
+
+        Button post = new Button("Добавить");
+
+        post.addClickListener(e -> {
+           Material material = new Material();
+           material.setName(name.getValue());
+           material.setValue(Integer.parseInt(value.getValue()));
+           materialService.save(material);
+           updateGrid();
+        });
+        addMaterial.add(name, value, post);
+
+        addMaterial.setTarget(addButton);
+
+        add(grid, addMaterial, addButton);
     }
     
     private void setupGrid(){
