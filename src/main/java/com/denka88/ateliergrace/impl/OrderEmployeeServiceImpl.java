@@ -3,9 +3,11 @@ package com.denka88.ateliergrace.impl;
 import com.denka88.ateliergrace.model.OrderEmployee;
 import com.denka88.ateliergrace.repo.OrderEmployeeRepo;
 import com.denka88.ateliergrace.service.OrderEmployeeService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class OrderEmployeeServiceImpl implements OrderEmployeeService {
     
     private final OrderEmployeeRepo orderEmployeeRepo;

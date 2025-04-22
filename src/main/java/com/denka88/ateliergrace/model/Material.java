@@ -75,4 +75,9 @@ public class Material {
     public void setOrganizations(List<Organization> organizations) {
         this.organizations = organizations;
     }*/
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

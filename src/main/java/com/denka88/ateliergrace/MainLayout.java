@@ -47,13 +47,21 @@ public class MainLayout extends AppLayout {
                 LumoUtility.Width.FULL);
 
         if (authenticationContext.hasRole("ADMIN")){
-            navigation.add(createLink("Заказы"), createLink("Клиенты"),
-                    createLink("Поставщики"), createLink("Материалы"), createLink("Сотрудники"));
+            navigation.add(
+                    createLink("Заказы"), createLink("Клиенты"),
+                    createLink("Поставщики"), createLink("Материалы"), 
+                    createLink("Сотрудники"), createLink("Поставки")
+            );
         } else if (authenticationContext.hasRole("CLIENT")) {
-            navigation.add(createLink("Заказы"), createLink("Создать заказ"));
+            navigation.add(
+                    createLink("Заказы"), createLink("Создать заказ")
+            );
         }
         else {
-            navigation.add(createLink("Заказы"), createLink("Поставщики"), createLink("Материалы"));
+            navigation.add(
+                    createLink("Заказы"), createLink("Поставщики"),
+                    createLink("Поставки"), createLink("Материалы")
+            );
         }
 
         return navigation;
@@ -77,6 +85,9 @@ public class MainLayout extends AppLayout {
                     break;
                 case "Сотрудники":
                     link.setRoute(EmployeesView.class);
+                    break; 
+                case "Поставки":
+                    link.setRoute(OrganizationMaterialView.class);
                     break;
                 default:
                     link.setRoute(MainView.class);

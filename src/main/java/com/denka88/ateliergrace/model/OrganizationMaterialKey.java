@@ -3,10 +3,11 @@ package com.denka88.ateliergrace.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
-public class OrganizationMaterialKey {
+public class OrganizationMaterialKey implements Serializable {
 
     @Column(name = "organization_id")
     private Long organizationId;

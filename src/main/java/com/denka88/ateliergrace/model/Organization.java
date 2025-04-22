@@ -59,4 +59,9 @@ public class Organization {
     public void setMaterials(List<Material> materials) {
         this.materials = materials;
     }*/
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

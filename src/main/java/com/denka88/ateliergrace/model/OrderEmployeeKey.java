@@ -5,11 +5,12 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 
 @Embeddable
-public class OrderEmployeeKey {
+public class OrderEmployeeKey implements Serializable {
 
     @Column(name = "order_id")
     private Long orderId;
