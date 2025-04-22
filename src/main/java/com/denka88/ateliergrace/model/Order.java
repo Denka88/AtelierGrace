@@ -27,9 +27,9 @@ public class Order {
     private Set<Material> materials;
 
     @OneToMany(mappedBy = "order")
-    private Set<OrderEmployee> orders;
+    private Set<OrderEmployee> orderEmployees;
 
-    public Order(Long id, Client client, String orderName, String type, LocalDate orderDate, float cost, Status status, Set<Material> materials, Set<OrderEmployee> orders) {
+    public Order(Long id, Client client, String orderName, String type, LocalDate orderDate, float cost, Status status, Set<Material> materials, Set<OrderEmployee> orderEmployees) {
         this.id = id;
         this.client = client;
         this.orderName = orderName;
@@ -38,7 +38,7 @@ public class Order {
         this.cost = cost;
         this.status = status;
         this.materials = materials;
-        this.orders = orders;
+        this.orderEmployees = orderEmployees;
     }
 
     public Order() {
@@ -101,12 +101,12 @@ public class Order {
         this.status = status;
     }
 
-    public Set<OrderEmployee> getOrders() {
-        return orders;
+    public Set<OrderEmployee> getOrderEmployees() {
+        return orderEmployees;
     }
 
-    public void setOrders(Set<OrderEmployee> orders) {
-        this.orders = orders;
+    public void setOrderEmployees(Set<OrderEmployee> orders) {
+        this.orderEmployees = orders;
     }
 
     public Set<Material> getMaterials() {
