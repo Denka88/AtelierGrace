@@ -17,23 +17,17 @@ public class Material {
 
     private int value;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "materials", fetch = FetchType.LAZY)
     private Set<Order> orders;
-    
-/*
-    @OneToMany
-    private List<Organization> organizations;
-*/
 
     public Material() {
     }
 
-    public Material(Long id, String name, int value, Set<Order> orders, List<Organization> organizations) {
+    public Material(Long id, String name, int value, Set<Order> orders) {
         this.id = id;
         this.name = name;
         this.value = value;
         this.orders = orders;
-//        this.organizations = organizations;
     }
 
     public Long getId() {
@@ -67,14 +61,6 @@ public class Material {
     public void setOrders(Set<Order> orders) {
         this.orders = orders;
     }
-
-    /*public List<Organization> getOrganizations() {
-        return organizations;
-    }
-
-    public void setOrganizations(List<Organization> organizations) {
-        this.organizations = organizations;
-    }*/
 
     @Override
     public String toString() {

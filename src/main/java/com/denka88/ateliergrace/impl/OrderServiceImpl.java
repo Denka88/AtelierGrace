@@ -19,7 +19,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> findAll() {
-        return orderRepo.findAll();
+        return orderRepo.findAllWithEmployeesAndMaterials();
     }
 
     @Override
@@ -40,5 +40,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void update(Order order) {
         orderRepo.save(order);
+    }
+
+    @Override
+    public Optional<Order> findByClientId(Long clientId) {
+        return orderRepo.findByClientId(clientId);
     }
 }

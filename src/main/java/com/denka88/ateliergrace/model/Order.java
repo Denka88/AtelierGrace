@@ -21,9 +21,16 @@ public class Order {
     private String type;
     private LocalDate orderDate;
     private float cost;
+    
+    @Enumerated(EnumType.STRING)
     private Status status;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "order_materials",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "material_id")
+    )
     private Set<Material> materials;
 
     @OneToMany(mappedBy = "order")

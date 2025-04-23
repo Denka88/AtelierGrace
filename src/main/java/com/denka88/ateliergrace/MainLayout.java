@@ -54,7 +54,7 @@ public class MainLayout extends AppLayout {
             );
         } else if (authenticationContext.hasRole("CLIENT")) {
             navigation.add(
-                    createLink("Заказы"), createLink("Создать заказ")
+                    createLink("Мои заказы"), createLink("Создать заказ")/*<<<Сделать*/
             );
         }
         else {
@@ -72,7 +72,7 @@ public class MainLayout extends AppLayout {
         link.add(viewName);
             switch (viewName){
                 case "Заказы":
-                    link.setRoute(TestView.class);
+                    link.setRoute(OrdersView.class);
                     break;
                 case "Клиенты":
                     link.setRoute(ClientsView.class);
@@ -88,6 +88,12 @@ public class MainLayout extends AppLayout {
                     break; 
                 case "Поставки":
                     link.setRoute(OrganizationMaterialView.class);
+                    break; 
+                case "Мои заказы":
+                    link.setRoute(TestView.class);
+                    break; 
+                case "Создать заказ":
+                    link.setRoute(TestView.class);
                     break;
                 default:
                     link.setRoute(MainView.class);

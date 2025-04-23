@@ -75,7 +75,7 @@ public class Employee {
 
     @Override
     public String toString() {
-        return surname + " " + name + " " + patronymic;
+        return name;
     }
 
     public Set<OrderEmployee> getOrders() {
