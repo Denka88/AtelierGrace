@@ -41,4 +41,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void update(Employee employee) {
         employeeRepo.save(employee);
     }
+
+    @Override
+    public boolean hasOrder(Employee employee) {
+        return employee.getOrders() != null;
+    }
 }

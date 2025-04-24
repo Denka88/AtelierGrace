@@ -13,5 +13,7 @@ public interface OrderEmployeeService {
     OrderEmployee save(OrderEmployee orderEmployee);
     
     void update(OrderEmployee orderEmployee);
+
+    OrderEmployee findFree();
     
 }

@@ -30,4 +30,9 @@ public class OrderEmployeeServiceImpl implements OrderEmployeeService {
     public void update(OrderEmployee orderEmployee) {
         orderEmployeeRepo.save(orderEmployee);
     }
+
+    @Override
+    public OrderEmployee findFree() {
+        return orderEmployeeRepo.findByEmployee_OrdersEmpty();
+    }
 }

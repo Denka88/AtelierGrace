@@ -16,5 +16,7 @@ public interface EmployeeService {
     void delete(Long id);
     
     void update(Employee employee);
+
+    boolean hasOrder(Employee employee);
     
 }
