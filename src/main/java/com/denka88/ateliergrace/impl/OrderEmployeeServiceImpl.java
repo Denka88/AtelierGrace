@@ -1,6 +1,8 @@
 package com.denka88.ateliergrace.impl;
 
+import com.denka88.ateliergrace.model.Employee;
 import com.denka88.ateliergrace.model.OrderEmployee;
+import com.denka88.ateliergrace.repo.EmployeeRepo;
 import com.denka88.ateliergrace.repo.OrderEmployeeRepo;
 import com.denka88.ateliergrace.service.OrderEmployeeService;
 import org.springframework.stereotype.Service;
@@ -31,8 +33,4 @@ public class OrderEmployeeServiceImpl implements OrderEmployeeService {
         orderEmployeeRepo.save(orderEmployee);
     }
 
-    @Override
-    public OrderEmployee findFree() {
-        return orderEmployeeRepo.findByEmployee_OrdersEmpty();
-    }
 }

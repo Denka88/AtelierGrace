@@ -54,7 +54,7 @@ public class MainLayout extends AppLayout {
             );
         } else if (authenticationContext.hasRole("CLIENT")) {
             navigation.add(
-                    createLink("Мои заказы"), createLink("Создать заказ")/*<<<Сделать*/
+                    createLink("Мои заказы"), createLink("Создать заказ")
             );
         }
         else {
@@ -90,10 +90,10 @@ public class MainLayout extends AppLayout {
                     link.setRoute(OrganizationMaterialView.class);
                     break; 
                 case "Мои заказы":
-                    link.setRoute(TestView.class);
+                    link.setRoute(MyOrdersView.class);
                     break; 
                 case "Создать заказ":
-                    link.setRoute(TestView.class);
+                    link.setRoute(AddOrderView.class);
                     break;
                 default:
                     link.setRoute(MainView.class);

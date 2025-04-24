@@ -1,5 +1,6 @@
 package com.denka88.ateliergrace.service;
 
+import com.denka88.ateliergrace.model.Employee;
 import com.denka88.ateliergrace.model.OrderEmployee;
 import com.denka88.ateliergrace.model.OrderEmployeeKey;
 
@@ -13,7 +14,5 @@ public interface OrderEmployeeService {
     OrderEmployee save(OrderEmployee orderEmployee);
     
     void update(OrderEmployee orderEmployee);
-
-    OrderEmployee findFree();
     
 }

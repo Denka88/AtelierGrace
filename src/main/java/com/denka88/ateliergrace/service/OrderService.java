@@ -17,6 +17,6 @@ public interface OrderService {
     
     void update(Order order);
     
-    Optional<Order> findByClientId(Long clientId);
+    List<Order> findByClientId(Long clientId);
     
 }
