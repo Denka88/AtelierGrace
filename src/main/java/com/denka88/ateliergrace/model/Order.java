@@ -3,6 +3,7 @@ package com.denka88.ateliergrace.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.Set;
 
 @Entity
@@ -122,5 +123,9 @@ public class Order {
 
     public void setMaterials(Set<Material> materials) {
         this.materials = materials;
+    }
+
+    public void setClient(Optional<Client> client) {
+        this.client = client.orElse(null);
     }
 }

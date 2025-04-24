@@ -26,7 +26,7 @@ public class OrdersView extends VerticalLayout {
     private final OrderService orderService;
     private final Grid<Order> grid;
 
-    public OrdersView(OrderService orderService, EmployeeService employeeService, OrderEmployeeService orderEmployeeService) {
+    public OrdersView(OrderService orderService) {
         this.orderService = orderService;
         this.grid = new Grid<>(Order.class, false);
         

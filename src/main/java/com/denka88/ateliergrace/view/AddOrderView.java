@@ -1,12 +1,10 @@
 package com.denka88.ateliergrace.view;
 
+import com.denka88.ateliergrace.model.Auth;
 import com.denka88.ateliergrace.model.Material;
 import com.denka88.ateliergrace.model.Order;
 import com.denka88.ateliergrace.model.Status;
-import com.denka88.ateliergrace.service.ClientService;
-import com.denka88.ateliergrace.service.MaterialService;
-import com.denka88.ateliergrace.service.OrderEmployeeService;
-import com.denka88.ateliergrace.service.OrderService;
+import com.denka88.ateliergrace.service.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -33,12 +31,16 @@ public class AddOrderView extends VerticalLayout {
     private final MaterialService materialService;
     private final OrderEmployeeService orderEmployeeService;
     private final ClientService clientService;
+    private final AuthService authService;
 
-    public AddOrderView(OrderService orderService, MaterialService materialService, OrderEmployeeService orderEmployeeService, ClientService clientService) {
+    public AddOrderView(OrderService orderService, MaterialService materialService,
+                        OrderEmployeeService orderEmployeeService,
+                        ClientService clientService, AuthService authService, AuthenticationContext authenticationContext) {
         this.orderService = orderService;
         this.materialService = materialService;
         this.orderEmployeeService = orderEmployeeService;
         this.clientService = clientService;
+        this.authService = authService;
 
         TextField orderName = new TextField("Название заказа");
         TextField type = new TextField("Тип заказа");
@@ -49,13 +51,11 @@ public class AddOrderView extends VerticalLayout {
 
         materials.setWidth("100%");
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
         Button create = new Button("Создать");
 
         create.addClickListener(e -> {
             Order order = new Order();
-//            order.setClient();
+            order.setClient(clientService.findById(1L));
             order.setOrderName(orderName.getValue());
             order.setType(type.getValue());
 //            order.setMaterials(new HashSet<>(materials.getValue()));
