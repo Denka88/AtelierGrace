@@ -5,6 +5,8 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 public class OrganizationMaterial {
@@ -14,10 +16,12 @@ public class OrganizationMaterial {
     
     @ManyToOne
     @MapsId("materialId")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Material material;
     
     @ManyToOne
     @MapsId("organizationId")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Organization organization;
     
     private float cost;
