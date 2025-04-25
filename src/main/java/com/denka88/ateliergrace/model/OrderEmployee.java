@@ -1,9 +1,6 @@
 package com.denka88.ateliergrace.model;
 
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
+import jakarta.persistence.*;
 
 @Entity
 public class OrderEmployee {
@@ -11,12 +8,14 @@ public class OrderEmployee {
     @EmbeddedId
     private OrderEmployeeKey id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("employeeId")
+    @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("orderId")
+    @JoinColumn(name = "order_id")
     private Order order;
 
     private int period;

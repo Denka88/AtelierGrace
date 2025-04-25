@@ -1,8 +1,6 @@
 package com.denka88.ateliergrace.impl;
 
-import com.denka88.ateliergrace.model.Client;
-import com.denka88.ateliergrace.model.Order;
-import com.denka88.ateliergrace.model.Status;
+import com.denka88.ateliergrace.model.*;
 import com.denka88.ateliergrace.repo.OrderRepo;
 import com.denka88.ateliergrace.service.CurrentUserService;
 import com.denka88.ateliergrace.service.OrderEmployeeService;
@@ -11,8 +9,10 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -64,5 +64,32 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> findByClientId(Long clientId) {
         return orderRepo.findByClientId(clientId);
+    }
+
+    @Override
+    @Transactional
+    public void takeOrder(Order order) {
+        Employee currentEmployee = currentUserService.getCurrentEmployee()
+                        .orElseThrow(() -> new IllegalArgumentException("Сотрудник не найден"));
+        
+        boolean alreadyTaken = order.getOrderEmployees().stream()
+                .anyMatch(oe -> oe.getEmployee().getId().equals(currentEmployee.getId()));
+
+        if (!alreadyTaken) {
+            OrderEmployee orderEmployee = new OrderEmployee();
+            
+            orderEmployee.setOrder(order);
+            orderEmployee.setEmployee(currentEmployee);
+
+            OrderEmployeeKey key = new OrderEmployeeKey();
+            key.setOrderId(order.getId());
+            key.setEmployeeId(currentEmployee.getId());
+            orderEmployee.setId(key);
+            
+            orderEmployeeService.save(orderEmployee);
+
+            order.getOrderEmployees().add(orderEmployee);
+            orderRepo.save(order);
+        }
     }
 }
