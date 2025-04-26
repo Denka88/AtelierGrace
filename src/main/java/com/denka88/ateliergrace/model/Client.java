@@ -2,6 +2,8 @@ package com.denka88.ateliergrace.model;
 
 import jakarta.persistence.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "clients")
 public class Client {
@@ -16,15 +18,19 @@ public class Client {
 
     private String phone;
 
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Order> orders;
+
     public Client() {
     }
 
-    public Client(Long id, String name, String surname, String patronymic, String phone) {
+    public Client(Long id, String name, String surname, String patronymic, String phone, Set<Order> orders) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.patronymic = patronymic;
         this.phone = phone;
+        this.orders = orders;
     }
 
     public Long getId() {
@@ -70,5 +76,13 @@ public class Client {
     @Override
     public String toString() {
         return name;
+    }
+
+    public Set<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(Set<Order> orders) {
+        this.orders = orders;
     }
 }

@@ -4,6 +4,7 @@ import com.denka88.ateliergrace.model.Auth;
 import com.denka88.ateliergrace.model.UserType;
 import com.denka88.ateliergrace.repo.AuthRepo;
 import com.denka88.ateliergrace.service.AuthService;
+import jakarta.transaction.Transactional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -43,8 +44,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public void delete(Long userId) {
-        authRepo.deleteById(userId);
+        authRepo.deleteByUserId(userId);
     }
 
     @Override

@@ -50,6 +50,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         orderRepo.deleteById(id);
     }

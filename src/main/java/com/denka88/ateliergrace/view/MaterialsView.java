@@ -2,6 +2,8 @@ package com.denka88.ateliergrace.view;
 
 import com.denka88.ateliergrace.MainLayout;
 import com.denka88.ateliergrace.model.Material;
+import com.denka88.ateliergrace.model.UserType;
+import com.denka88.ateliergrace.service.CurrentUserService;
 import com.denka88.ateliergrace.service.MaterialService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -14,6 +16,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.spring.security.AuthenticationContext;
 import jakarta.annotation.security.RolesAllowed;
 
 import java.util.List;
@@ -25,9 +28,11 @@ public class MaterialsView extends VerticalLayout {
     
     private final MaterialService materialService;
     private final Grid<Material> grid;
+    private final CurrentUserService currentUserService;
 
-    public MaterialsView(MaterialService materialService) {
+    public MaterialsView(MaterialService materialService, CurrentUserService currentUserService) {
         this.materialService = materialService;
+        this.currentUserService = currentUserService;
         this.grid = new Grid<>(Material.class, false);
         
         setupGrid();
@@ -65,16 +70,19 @@ public class MaterialsView extends VerticalLayout {
         grid.addColumn(Material::getId).setHeader("ID").setSortable(true);
         grid.addColumn(Material::getName).setHeader("Название").setSortable(true);
         grid.addColumn(Material::getValue).setHeader("На складе").setSortable(true);
-        grid.addColumn(new ComponentRenderer<>(Button::new, (button, material) -> {
-            button.addThemeVariants(ButtonVariant.LUMO_ICON,
-                    ButtonVariant.LUMO_ERROR,
-                    ButtonVariant.LUMO_TERTIARY);
-            button.addClickListener(e -> {
-               materialService.delete(material.getId());
-               updateGrid();
-            });
-            button.setIcon(new Icon(VaadinIcon.TRASH));
-        })).setHeader("Действие");
+        if(currentUserService.getCurrentUserType().equals(UserType.ADMIN)){
+            grid.addColumn(new ComponentRenderer<>(Button::new, (button, material) -> {
+                button.addThemeVariants(ButtonVariant.LUMO_ICON,
+                        ButtonVariant.LUMO_ERROR,
+                        ButtonVariant.LUMO_TERTIARY);
+                button.addClickListener(e -> {
+                    materialService.delete(material.getId());
+                    updateGrid();
+                });
+                button.setIcon(new Icon(VaadinIcon.TRASH));
+            })).setHeader("Действие");
+        }
+        
     }
     
     private List<Material> updateGrid(){

@@ -2,8 +2,6 @@ package com.denka88.ateliergrace.model;
 
 import jakarta.persistence.*;
 
-import java.util.List;
-
 @Entity
 @Table(name = "organizations")
 public class Organization {
@@ -15,17 +13,14 @@ public class Organization {
     private String name;
     private String address;
     
-    /*@OneToMany
-    private List<Material> materials;*/
 
     public Organization() {
     }
 
-    public Organization(Long id, String name, String address, List<Material> materials) {
+    public Organization(Long id, String name, String address) {
         this.id = id;
         this.name = name;
         this.address = address;
-//        this.materials = materials;
     }
 
     public Long getId() {
@@ -51,14 +46,6 @@ public class Organization {
     public void setAddress(String address) {
         this.address = address;
     }
-
-    /*public List<Material> getMaterials() {
-        return materials;
-    }
-
-    public void setMaterials(List<Material> materials) {
-        this.materials = materials;
-    }*/
 
     @Override
     public String toString() {

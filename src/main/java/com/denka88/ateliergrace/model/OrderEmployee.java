@@ -1,6 +1,8 @@
 package com.denka88.ateliergrace.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 public class OrderEmployee {
@@ -11,11 +13,13 @@ public class OrderEmployee {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("employeeId")
     @JoinColumn(name = "employee_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Employee employee;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("orderId")
     @JoinColumn(name = "order_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Order order;
 
     private int period;

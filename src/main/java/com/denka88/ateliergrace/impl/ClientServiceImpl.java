@@ -1,7 +1,10 @@
 package com.denka88.ateliergrace.impl;
 
 import com.denka88.ateliergrace.model.Client;
+import com.denka88.ateliergrace.repo.AuthRepo;
 import com.denka88.ateliergrace.repo.ClientRepo;
+import com.denka88.ateliergrace.repo.OrderRepo;
+import com.denka88.ateliergrace.service.AuthService;
 import com.denka88.ateliergrace.service.ClientService;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +15,11 @@ import java.util.Optional;
 public class ClientServiceImpl implements ClientService {
 
     private final ClientRepo clientRepo;
+    private final AuthService authService;
 
-    public ClientServiceImpl(ClientRepo clientRepo) {
+    public ClientServiceImpl(ClientRepo clientRepo, AuthService authService) {
         this.clientRepo = clientRepo;
+        this.authService = authService;
     }
 
     @Override
@@ -34,7 +39,11 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public void delete(Long id) {
-        clientRepo.deleteById(id);
+        Client client = clientRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Клиент не найден"));
+        
+        authService.delete(client.getId());
+        
+        clientRepo.delete(client);
     }
 
     @Override

@@ -38,6 +38,7 @@ public class MyOrdersView extends VerticalLayout {
     private void setupGrid(){
         grid.setClassName("force-focus-outline");
         
+        grid.addColumn(Order::getId).setHeader("Номер заказа").setSortable(true).setAutoWidth(true);
         grid.addColumn(Order::getOrderName).setHeader("Название").setSortable(true).setAutoWidth(true);
         grid.addColumn(Order::getType).setHeader("Тип заказа").setSortable(true).setAutoWidth(true);
         grid.addColumn(Order::getOrderDate).setHeader("Дата создания").setSortable(true).setAutoWidth(true);

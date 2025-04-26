@@ -18,7 +18,7 @@ public class Employee {
     private String surname;
     private String patronymic;
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderEmployee> orders;
 
     public Employee() {

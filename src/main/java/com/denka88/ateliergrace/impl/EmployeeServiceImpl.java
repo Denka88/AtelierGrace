@@ -2,7 +2,9 @@ package com.denka88.ateliergrace.impl;
 
 import com.denka88.ateliergrace.model.Employee;
 import com.denka88.ateliergrace.repo.EmployeeRepo;
+import com.denka88.ateliergrace.service.AuthService;
 import com.denka88.ateliergrace.service.EmployeeService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,9 +14,11 @@ import java.util.Optional;
 public class EmployeeServiceImpl implements EmployeeService {
     
     private final EmployeeRepo employeeRepo;
+    private final AuthService authService;
 
-    public EmployeeServiceImpl(EmployeeRepo employeeRepo) {
+    public EmployeeServiceImpl(EmployeeRepo employeeRepo, AuthService authService) {
         this.employeeRepo = employeeRepo;
+        this.authService = authService;
     }
 
     @Override
@@ -33,7 +37,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
+        Employee employee = employeeRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Сотрудник не найден"));
+
+        authService.delete(employee.getId());
+        
+        employee.getOrders().clear();
         employeeRepo.deleteById(id);
     }
 

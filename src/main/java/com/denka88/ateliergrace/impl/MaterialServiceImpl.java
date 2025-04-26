@@ -3,6 +3,7 @@ package com.denka88.ateliergrace.impl;
 import com.denka88.ateliergrace.model.Material;
 import com.denka88.ateliergrace.repo.MaterialRepo;
 import com.denka88.ateliergrace.service.MaterialService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
+    @Transactional
     public void update(Material material) {
         materialRepo.save(material);
     }
