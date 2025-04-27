@@ -48,11 +48,11 @@ public class EmployeesView extends VerticalLayout {
     private void setupGrid(){
         grid.setClassName("force-focus-outline");
 
-        grid.addColumn(Employee::getId).setHeader("ID").setSortable(true);
-        grid.addColumn(Employee::getSurname).setHeader("Фамилия").setSortable(true);
-        grid.addColumn(Employee::getName).setHeader("Имя").setSortable(true);
-        grid.addColumn(Employee::getPatronymic).setHeader("Отчество").setSortable(true);
-        grid.addColumn(Employee::getPost).setHeader("Должность").setSortable(true);
+        grid.addColumn(Employee::getId).setHeader("ID").setSortable(true).setAutoWidth(true);
+        grid.addColumn(Employee::getSurname).setHeader("Фамилия").setSortable(true).setAutoWidth(true);
+        grid.addColumn(Employee::getName).setHeader("Имя").setSortable(true).setAutoWidth(true);
+        grid.addColumn(Employee::getPatronymic).setHeader("Отчество").setSortable(true).setAutoWidth(true);
+        grid.addColumn(Employee::getPost).setHeader("Должность").setSortable(true).setAutoWidth(true);
         if(currentUserService.getCurrentUserType().equals(UserType.ADMIN)){
             grid.addColumn(new ComponentRenderer<>(Button::new, (button, employee) -> {
                 button.addThemeVariants(ButtonVariant.LUMO_ICON,
@@ -63,7 +63,7 @@ public class EmployeesView extends VerticalLayout {
                     updateGrid();
                 });
                 button.setIcon(new Icon(VaadinIcon.TRASH));
-            })).setHeader("Действие");
+            })).setHeader("Действие").setAutoWidth(true);
         }
     }
 

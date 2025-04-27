@@ -67,9 +67,9 @@ public class OrganizationsView extends VerticalLayout {
     private void setupGrid(){
         grid.setClassName("force-focus-outline");
         
-        grid.addColumn(Organization::getId).setHeader("ID").setSortable(true);
-        grid.addColumn(Organization::getName).setHeader("Название").setSortable(true);
-        grid.addColumn(Organization::getAddress).setHeader("Адрес").setSortable(true);
+        grid.addColumn(Organization::getId).setHeader("ID").setSortable(true).setAutoWidth(true);
+        grid.addColumn(Organization::getName).setHeader("Название").setSortable(true).setAutoWidth(true);
+        grid.addColumn(Organization::getAddress).setHeader("Адрес").setSortable(true).setAutoWidth(true);
         if(currentUserService.getCurrentUserType().equals(UserType.ADMIN)){
             grid.addColumn(new ComponentRenderer<>(Button::new, (button, organization) -> {
                 button.addThemeVariants(ButtonVariant.LUMO_ICON,
@@ -80,7 +80,7 @@ public class OrganizationsView extends VerticalLayout {
                     updateGrid();
                 });
                 button.setIcon(new Icon(VaadinIcon.TRASH));
-            })).setHeader("Действие");
+            })).setHeader("Действие").setAutoWidth(true);
         }
     }
     

@@ -86,10 +86,10 @@ public class OrganizationMaterialView extends VerticalLayout {
     private void setupGrid(){
         grid.setClassName("force-focus-outline");
         
-        grid.addColumn(OrganizationMaterial::getOrganization).setHeader("Поставщик").setSortable(true);
-        grid.addColumn(OrganizationMaterial::getMaterial).setHeader("Материал").setSortable(true);
-        grid.addColumn(OrganizationMaterial::getValue).setHeader("Колличество").setSortable(true);
-        grid.addColumn(OrganizationMaterial::getCost).setHeader("Цена").setSortable(true);
+        grid.addColumn(OrganizationMaterial::getOrganization).setHeader("Поставщик").setSortable(true).setAutoWidth(true);
+        grid.addColumn(OrganizationMaterial::getMaterial).setHeader("Материал").setSortable(true).setAutoWidth(true);
+        grid.addColumn(OrganizationMaterial::getValue).setHeader("Колличество").setSortable(true).setAutoWidth(true);
+        grid.addColumn(OrganizationMaterial::getCost).setHeader("Цена").setSortable(true).setAutoWidth(true);
     }
     
     private List<OrganizationMaterial> updateGrid(){

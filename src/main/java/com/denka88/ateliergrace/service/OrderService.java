@@ -20,4 +20,6 @@ public interface OrderService {
     List<Order> findByClientId(Long clientId);
     
     void takeOrder(Order order);
+
+    void completeOrder(Long orderId);
 }

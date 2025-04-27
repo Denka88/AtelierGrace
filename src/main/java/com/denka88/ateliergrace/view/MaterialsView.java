@@ -67,9 +67,9 @@ public class MaterialsView extends VerticalLayout {
     private void setupGrid(){
         grid.setClassName("force-focus-outline");
         
-        grid.addColumn(Material::getId).setHeader("ID").setSortable(true);
-        grid.addColumn(Material::getName).setHeader("Название").setSortable(true);
-        grid.addColumn(Material::getValue).setHeader("На складе").setSortable(true);
+        grid.addColumn(Material::getId).setHeader("ID").setSortable(true).setAutoWidth(true);
+        grid.addColumn(Material::getName).setHeader("Название").setSortable(true).setAutoWidth(true);
+        grid.addColumn(Material::getValue).setHeader("На складе").setSortable(true).setAutoWidth(true);
         if(currentUserService.getCurrentUserType().equals(UserType.ADMIN)){
             grid.addColumn(new ComponentRenderer<>(Button::new, (button, material) -> {
                 button.addThemeVariants(ButtonVariant.LUMO_ICON,
@@ -80,7 +80,7 @@ public class MaterialsView extends VerticalLayout {
                     updateGrid();
                 });
                 button.setIcon(new Icon(VaadinIcon.TRASH));
-            })).setHeader("Действие");
+            })).setHeader("Действие").setAutoWidth(true);
         }
         
     }

@@ -82,7 +82,6 @@ public class OrderServiceImpl implements OrderService {
             orderEmployee.setEmployee(currentEmployee);
 
             orderEmployee.setDateOfReady(LocalDate.now().plusDays(14));
-            
             OrderEmployeeKey key = new OrderEmployeeKey();
             key.setOrderId(order.getId());
             key.setEmployeeId(currentEmployee.getId());
@@ -93,5 +92,15 @@ public class OrderServiceImpl implements OrderService {
             order.getOrderEmployees().add(orderEmployee);
             orderRepo.save(order);
         }
+    }
+
+    @Override
+    @Transactional
+    public void completeOrder(Long orderId) {
+        Order order = orderRepo.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Заказ не найден"));
+        
+        order.setStatus(Status.COMPLETED);
+        orderRepo.save(order);
     }
 }

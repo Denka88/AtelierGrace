@@ -41,11 +41,11 @@ public class ClientsView extends VerticalLayout {
     private void setupGrid(){
         grid.setClassName("force-focus-outline");
 
-        grid.addColumn(Client::getId).setHeader("ID").setSortable(true);
-        grid.addColumn(Client::getSurname).setHeader("Фамилия").setSortable(true);
-        grid.addColumn(Client::getName).setHeader("Имя").setSortable(true);
-        grid.addColumn(Client::getPatronymic).setHeader("Отчество").setSortable(true);
-        grid.addColumn(Client::getPhone).setHeader("Номер телефона").setSortable(true);
+        grid.addColumn(Client::getId).setHeader("ID").setSortable(true).setAutoWidth(true);
+        grid.addColumn(Client::getSurname).setHeader("Фамилия").setSortable(true).setAutoWidth(true);
+        grid.addColumn(Client::getName).setHeader("Имя").setSortable(true).setAutoWidth(true);
+        grid.addColumn(Client::getPatronymic).setHeader("Отчество").setSortable(true).setAutoWidth(true);
+        grid.addColumn(Client::getPhone).setHeader("Номер телефона").setSortable(true).setAutoWidth(true);
         if(currentUserService.getCurrentUserType().equals(UserType.ADMIN)){
             grid.addColumn(new ComponentRenderer<>(Button::new, (button, client) -> {
                 button.addThemeVariants(ButtonVariant.LUMO_ICON,
@@ -56,7 +56,7 @@ public class ClientsView extends VerticalLayout {
                     updateGrid();
                 });
                 button.setIcon(new Icon(VaadinIcon.TRASH));
-            })).setHeader("Действие");
+            })).setHeader("Действие").setAutoWidth(true);
         }
     }
 
