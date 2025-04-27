@@ -2,12 +2,18 @@ package com.denka88.ateliergrace.view;
 
 import com.denka88.ateliergrace.MainLayout;
 import com.denka88.ateliergrace.model.Organization;
+import com.denka88.ateliergrace.model.UserType;
+import com.denka88.ateliergrace.service.CurrentUserService;
 import com.denka88.ateliergrace.service.OrganizationService;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.popover.Popover;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
@@ -21,9 +27,11 @@ public class OrganizationsView extends VerticalLayout {
     
     private final OrganizationService organizationService;
     private final Grid<Organization> grid;
+    private final CurrentUserService currentUserService;
 
-    public OrganizationsView(OrganizationService organizationService) {
+    public OrganizationsView(OrganizationService organizationService, CurrentUserService currentUserService) {
         this.organizationService = organizationService;
+        this.currentUserService = currentUserService;
         this.grid = new Grid<>(Organization.class, false);
         
         setupGrid();
@@ -62,6 +70,18 @@ public class OrganizationsView extends VerticalLayout {
         grid.addColumn(Organization::getId).setHeader("ID").setSortable(true);
         grid.addColumn(Organization::getName).setHeader("Название").setSortable(true);
         grid.addColumn(Organization::getAddress).setHeader("Адрес").setSortable(true);
+        if(currentUserService.getCurrentUserType().equals(UserType.ADMIN)){
+            grid.addColumn(new ComponentRenderer<>(Button::new, (button, organization) -> {
+                button.addThemeVariants(ButtonVariant.LUMO_ICON,
+                        ButtonVariant.LUMO_ERROR,
+                        ButtonVariant.LUMO_TERTIARY);
+                button.addClickListener(e -> {
+                    organizationService.delete(organization.getId());
+                    updateGrid();
+                });
+                button.setIcon(new Icon(VaadinIcon.TRASH));
+            })).setHeader("Действие");
+        }
     }
     
     private List<Organization> updateGrid(){

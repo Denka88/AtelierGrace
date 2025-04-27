@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 @Entity
 public class OrderEmployee {
 
@@ -21,17 +24,17 @@ public class OrderEmployee {
     @JoinColumn(name = "order_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Order order;
-
-    private int period;
+    
+    private LocalDate dateOfReady;
 
     public OrderEmployee() {
     }
 
-    public OrderEmployee(OrderEmployeeKey id, Employee employee, Order order, int period) {
+    public OrderEmployee(OrderEmployeeKey id, Employee employee, Order order, LocalDate dateOfReady) {
         this.id = id;
         this.employee = employee;
         this.order = order;
-        this.period = period;
+        this.dateOfReady = dateOfReady;
     }
 
     public OrderEmployeeKey getId() {
@@ -58,11 +61,11 @@ public class OrderEmployee {
         this.order = order;
     }
 
-    public int getPeriod() {
-        return period;
+    public LocalDate getDateOfReady() {
+        return dateOfReady;
     }
 
-    public void setPeriod(int period) {
-        this.period = period;
+    public void setDateOfReady(LocalDate dateOfReady) {
+        this.dateOfReady = dateOfReady;
     }
 }

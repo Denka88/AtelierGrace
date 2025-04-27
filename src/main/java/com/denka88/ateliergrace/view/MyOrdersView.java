@@ -42,6 +42,15 @@ public class MyOrdersView extends VerticalLayout {
         grid.addColumn(Order::getOrderName).setHeader("Название").setSortable(true).setAutoWidth(true);
         grid.addColumn(Order::getType).setHeader("Тип заказа").setSortable(true).setAutoWidth(true);
         grid.addColumn(Order::getOrderDate).setHeader("Дата создания").setSortable(true).setAutoWidth(true);
+        grid.addColumn(order -> {
+            if (order.getOrderEmployees() == null || order.getOrderEmployees().isEmpty()) {
+                return "Не назначено";
+            }
+            return order.getOrderEmployees().stream()
+                    .map(oe -> oe.getDateOfReady() != null ?
+                            oe.getDateOfReady().toString() : "Не указана")
+                    .collect(Collectors.joining(", "));
+        }).setHeader("Дата готовности").setSortable(true).setAutoWidth(true);
         grid.addColumn(Order::getCost).setHeader("Стоимость").setSortable(true).setAutoWidth(true);
         grid.addColumn(Order::getStatus).setHeader("Статус").setSortable(true).setAutoWidth(true);
         grid.addColumn(order -> {

@@ -45,6 +45,7 @@ public class OrderServiceImpl implements OrderService {
         order.setClient(currentClient);
         order.setOrderDate(LocalDate.now());
         order.setStatus(Status.PROGRESS);
+        
 
         return orderRepo.save(order);
     }
@@ -80,6 +81,8 @@ public class OrderServiceImpl implements OrderService {
             orderEmployee.setOrder(order);
             orderEmployee.setEmployee(currentEmployee);
 
+            orderEmployee.setDateOfReady(LocalDate.now().plusDays(14));
+            
             OrderEmployeeKey key = new OrderEmployeeKey();
             key.setOrderId(order.getId());
             key.setEmployeeId(currentEmployee.getId());
