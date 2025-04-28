@@ -7,7 +7,9 @@ import com.denka88.ateliergrace.service.CurrentUserService;
 import com.denka88.ateliergrace.service.OrganizationService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -29,6 +31,13 @@ public class OrganizationsView extends VerticalLayout {
     private final Grid<Organization> grid;
     private final CurrentUserService currentUserService;
 
+    private FormLayout editForm = new FormLayout();
+    
+    private TextField id = new TextField("ID");
+    private TextField editName = new TextField("Название");
+    private TextField editAddress = new TextField("Адресс");
+    private Button editButton = new Button("Сохранить изменения");
+    
     public OrganizationsView(OrganizationService organizationService, CurrentUserService currentUserService) {
         this.organizationService = organizationService;
         this.currentUserService = currentUserService;
@@ -61,7 +70,29 @@ public class OrganizationsView extends VerticalLayout {
 
         addOrganization.setTarget(addButton);
         
-        add(grid, addOrganization, addButton);
+        id.setVisible(false);
+
+        editForm.setWidth("400px");
+        editForm.add(id, editName, editAddress, editButton);
+        editForm.setVisible(false);
+        
+        editButton.addClickListener(e->{
+            Organization updateOrganization = organizationService.findById(Long.valueOf(id.getValue())).orElse(null);
+            updateOrganization.setName(editName.getValue());
+            updateOrganization.setAddress(editAddress.getValue());
+            organizationService.update(updateOrganization);
+            updateGrid();
+            editForm.setVisible(false);
+        });
+        
+        grid.addCellFocusListener(e->{
+            id.setValue(String.valueOf(e.getItem().map(Organization::getId).orElse(null)));
+            editName.setValue(e.getItem().map(Organization::getName).orElse("Не доступно"));
+            editAddress.setValue(e.getItem().map(Organization::getAddress).orElse("Не доступно"));
+        });
+        
+        add(grid, addOrganization, addButton, editForm);
+        
     }
     
     private void setupGrid(){
@@ -70,24 +101,30 @@ public class OrganizationsView extends VerticalLayout {
         grid.addColumn(Organization::getId).setHeader("ID").setSortable(true).setAutoWidth(true);
         grid.addColumn(Organization::getName).setHeader("Название").setSortable(true).setAutoWidth(true);
         grid.addColumn(Organization::getAddress).setHeader("Адрес").setSortable(true).setAutoWidth(true);
-        if(currentUserService.getCurrentUserType().equals(UserType.ADMIN)){
-            grid.addColumn(new ComponentRenderer<>(Button::new, (button, organization) -> {
-                button.addThemeVariants(ButtonVariant.LUMO_ICON,
-                        ButtonVariant.LUMO_ERROR,
-                        ButtonVariant.LUMO_TERTIARY);
-                button.addClickListener(e -> {
-                    organizationService.delete(organization.getId());
-                    updateGrid();
-                });
-                button.setIcon(new Icon(VaadinIcon.TRASH));
-            })).setHeader("Действие").setAutoWidth(true);
+
+        GridContextMenu<Organization> contextMenu = grid.addContextMenu();
+        
+        contextMenu.addItem("Изменить", e->{
+            if(editForm.isVisible()){
+                editForm.setVisible(false);
+            } else if (!editForm.isVisible()) {
+                editForm.setVisible(true);
+                id.setValue(String.valueOf(e.getItem().map(Organization::getId).orElse(null)));
+                editName.setValue(e.getItem().map(Organization::getName).orElse(null));
+                editAddress.setValue(e.getItem().map(Organization::getAddress).orElse(null));
+            }
+        });
+        if(currentUserService.getCurrentUserType().equals(UserType.ADMIN)) {
+            contextMenu.addItem("Удалить", e -> {
+                organizationService.delete(e.getItem().map(Organization::getId).orElse(null));
+                updateGrid();
+            });
         }
     }
     
-    private List<Organization> updateGrid(){
+    private void updateGrid(){
         List<Organization> organizations = organizationService.findAll();
         grid.setItems(organizations);
-        return organizations;
     }
     
     

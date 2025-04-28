@@ -1,149 +1,16 @@
-﻿
-=======================================================================================================
-
-1. Класс Auth (Entity)
-java
-Copy
-package com.example.atelier.model;
-
-import jakarta.persistence.*;
-import lombok.Data; // Или напишите геттеры/сеттеры вручную
-
-@Entity
-@Table(orderName = "Auth", uniqueConstraints = {
-    @UniqueConstraint(columnNames = "login") // Логин должен быть уникальным
-})
-@Data // Lombok (геттеры, сеттеры, toString)
-public class Auth {
-
-    public enum UserType {
-        CLIENT, EMPLOYEE, ADMIN // Enum для ролей
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long authId;
-
-    @Column(nullable = false, length = 25)
-    private String login;
-
-    @Column(nullable = false, length = 255)
-    private String passwordHash; // bcrypt/scrypt хеш
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserType userType; // CLIENT, EMPLOYEE, ADMIN
-
-    @Column(nullable = false)
-    private Long userId; // ID из таблицы Clients или Employees
-
-    // Конструкторы
-    public Auth() {}
-
-    public Auth(String login, String passwordHash, UserType userType, Long userId) {
-        this.login = login;
-        this.passwordHash = passwordHash;
-        this.userType = userType;
-        this.userId = userId;
-    }
-}
-=======================================================================================================
-2. Дополнительно: Репозиторий AuthRepository
-java
-Copy
-package com.example.atelier.repository;
-
-import com.example.atelier.model.Auth;
-import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.Optional;
-
-public interface AuthRepository extends JpaRepository<Auth, Long> {
-    Optional<Auth> findByLogin(String login); // Для поиска по логину
-    
-    boolean existsByLogin(String login); // Проверка уникальности логина
-}
-=======================================================================================================
-3. Пример использования в сервисе
-java
-Copy
-package com.example.atelier.service;
-
-import com.example.atelier.model.Auth;
-import com.example.atelier.repository.AuthRepository;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-
-@Service
-public class AuthService {
-
-    private final AuthRepository authRepo;
-    private final BCryptPasswordEncoder passwordEncoder;
-
-    public AuthService(AuthRepository authRepo) {
-        this.authRepo = authRepo;
-        this.passwordEncoder = new BCryptPasswordEncoder();
-    }
-
-    // Регистрация нового пользователя
-    public void register(String login, String password, Auth.UserType userType, Long userId) {
-        if (authRepo.existsByLogin(login)) {
-            throw new IllegalArgumentException("Логин уже занят");
-        }
-
-        Auth auth = new Auth();
-        auth.setLogin(login);
-        auth.setPasswordHash(passwordEncoder.encode(password)); // Хешируем пароль
-        auth.setUserType(userType);
-        auth.setUserId(userId);
+﻿HorizontalLayout buttonLayout = new HorizontalLayout();
+        buttonLayout.setWidthFull();
+        buttonLayout.setPadding(true);
+        buttonLayout.setSpacing(true);
         
-        authRepo.save(auth);
-    }
+        VerticalLayout group1 = new VerticalLayout();
+        Button mainButton1 = new Button("Потом придумаю че");
+        Button subButton1 = new Button("Доп. действие 1");
+        group1.add(mainButton1, subButton1);
+        group1.setSpacing(false);
+        group1.setPadding(false);
 
-    // Проверка логина/пароля
-    public boolean validateCredentials(String login, String rawPassword) {
-        Auth auth = authRepo.findByLogin(login)
-            .orElseThrow(() -> new IllegalArgumentException("Пользователь не найден"));
+        buttonLayout.add(group1);
+        buttonLayout.setAlignItems(Alignment.BASELINE);
         
-        return passwordEncoder.matches(rawPassword, auth.getPasswordHash());
-    }
-}
-=======================================================================================================
-4. Интеграция с Spring Security
-Добавьте в SecurityConfig:
-
-java
-Copy
-@Configuration
-@EnableWebSecurity
-public class SecurityConfig {
-
-    @Bean
-    public UserDetailsService userDetailsService(AuthRepository authRepo) {
-        return login -> {
-            Auth auth = authRepo.findByLogin(login)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-            return User.builder()
-                .username(auth.getLogin())
-                .password(auth.getPasswordHash())
-                .roles(auth.getUserType().orderName())
-                .build();
-        };
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/client/**").hasRole("CLIENT")
-                .requestMatchers("/employee/**").hasRole("EMPLOYEE")
-                .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/")
-            );
-        return http.build();
-    }
-}
-=======================================================================================================
+        ^^^^^^Это для кнопок фильтрации^^^^^^^
