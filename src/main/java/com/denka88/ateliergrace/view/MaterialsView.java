@@ -75,9 +75,6 @@ public class MaterialsView extends VerticalLayout {
         editValue.setMin(1);
         editValue.setMax(999999);
         
-        editForm.add(id, editName, editValue);
-        editForm.setVisible(false);
-        
         editButton.addClickListener(e->{
             Material updateMaterial = materialService.findById(Long.valueOf(id.getValue())).orElse(null);
             updateMaterial.setName(editName.getValue());
