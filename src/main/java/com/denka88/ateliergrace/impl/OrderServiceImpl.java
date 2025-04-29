@@ -1,10 +1,12 @@
 package com.denka88.ateliergrace.impl;
 
 import com.denka88.ateliergrace.model.*;
+import com.denka88.ateliergrace.repo.MaterialRepo;
 import com.denka88.ateliergrace.repo.OrderRepo;
 import com.denka88.ateliergrace.service.CurrentUserService;
 import com.denka88.ateliergrace.service.OrderEmployeeService;
 import com.denka88.ateliergrace.service.OrderService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +18,13 @@ import java.util.Optional;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepo orderRepo;
+    private final MaterialRepo materialRepo;
     private final CurrentUserService currentUserService;
     private final OrderEmployeeService orderEmployeeService;
 
-    public OrderServiceImpl(OrderRepo orderRepo, CurrentUserService currentUserService, OrderEmployeeService orderEmployeeService) {
+    public OrderServiceImpl(OrderRepo orderRepo, MaterialRepo materialRepo, CurrentUserService currentUserService, OrderEmployeeService orderEmployeeService) {
         this.orderRepo = orderRepo;
+        this.materialRepo = materialRepo;
         this.currentUserService = currentUserService;
         this.orderEmployeeService = orderEmployeeService;
     }
@@ -57,6 +61,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void update(Order order) {
         orderRepo.save(order);
     }

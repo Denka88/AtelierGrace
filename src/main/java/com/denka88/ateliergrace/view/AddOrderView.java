@@ -32,7 +32,7 @@ public class AddOrderView extends VerticalLayout {
     private final CurrentUserService currentUserService;
 
     public AddOrderView(OrderService orderService, MaterialService materialService,
-                        ClientService clientService, CurrentUserService currentUserService) {
+                        CurrentUserService currentUserService) {
         this.orderService = orderService;
         this.materialService = materialService;
         this.currentUserService = currentUserService;

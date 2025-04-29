@@ -26,7 +26,7 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "order_materials",
             joinColumns = @JoinColumn(name = "order_id"),
