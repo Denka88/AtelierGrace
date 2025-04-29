@@ -5,16 +5,23 @@ import com.denka88.ateliergrace.model.Material;
 import com.denka88.ateliergrace.model.UserType;
 import com.denka88.ateliergrace.service.CurrentUserService;
 import com.denka88.ateliergrace.service.MaterialService;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.popover.Popover;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.RolesAllowed;
 
 import java.util.List;
@@ -23,58 +30,96 @@ import java.util.List;
 @Route(value = "materials-list", layout = MainLayout.class)
 @RolesAllowed({"ADMIN", "EMPLOYEE"})
 public class MaterialsView extends VerticalLayout {
-    
+
     private final MaterialService materialService;
     private final Grid<Material> grid;
     private final CurrentUserService currentUserService;
 
     private FormLayout editForm = new FormLayout();
-
     private TextField id = new TextField("ID");
     private TextField editName = new TextField("Название");
     private IntegerField editValue = new IntegerField("Кол-во");
-    private Button editButton = new Button("Сохранить изменения");
-    
+    private Button editButton = new Button("Сохранить", VaadinIcon.CHECK.create());
+
 
     public MaterialsView(MaterialService materialService, CurrentUserService currentUserService) {
         this.materialService = materialService;
         this.currentUserService = currentUserService;
         this.grid = new Grid<>(Material.class, false);
-        
+
+        // Общие стили для страницы
+        setPadding(true);
+        setSpacing(false);
+        setSizeFull();
+        addClassName(LumoUtility.Padding.LARGE);
+
         setupGrid();
         updateGrid();
 
-        Button addButton = new Button("Добавить материал");
-        
+        // Стилизация кнопки добавления
+        Button addButton = new Button("Добавить материал", VaadinIcon.PLUS.create());
+        addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        addButton.addClassName(LumoUtility.Margin.Bottom.LARGE);
+
+        // Стилизация popover для добавления
         Popover addMaterial = new Popover();
         addMaterial.setModal(true);
         addMaterial.setBackdropVisible(true);
-        addMaterial.setWidth("210px");
+        addMaterial.setWidth("300px");
+        addMaterial.addClassName(LumoUtility.Padding.LARGE);
 
         TextField name = new TextField("Название");
-        TextField value = new TextField("На складе");
+        name.setWidthFull();
 
-        Button post = new Button("Добавить");
+        IntegerField value = new IntegerField("На складе");
+        value.setWidthFull();
+        value.setMin(1);
+        value.setMax(999999);
+        value.setStepButtonsVisible(true);
+
+        Button post = new Button("Добавить", VaadinIcon.CHECK.create());
+        post.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        post.setWidthFull();
 
         post.addClickListener(e -> {
-           Material material = new Material();
-           material.setName(name.getValue());
-           material.setValue(Integer.parseInt(value.getValue()));
-           materialService.save(material);
-           updateGrid();
+            if (name.isEmpty() || value.isEmpty()) {
+                return;
+            }
+            Material material = new Material();
+            material.setName(name.getValue());
+            material.setValue(value.getValue());
+            materialService.save(material);
+            updateGrid();
+            addMaterial.setVisible(false);
+            name.clear();
+            value.clear();
         });
-        addMaterial.add(name, value, post);
 
+        FormLayout popoverForm = new FormLayout(name, value, post);
+        popoverForm.setWidth("400px");
+        addMaterial.add(popoverForm);
         addMaterial.setTarget(addButton);
 
+        // Стилизация формы редактирования
         editForm.setWidth("400px");
+        editForm.addClassNames(
+                LumoUtility.Padding.LARGE,
+                LumoUtility.BorderRadius.LARGE,
+                LumoUtility.BoxShadow.SMALL,
+                LumoUtility.Background.BASE
+        );
 
         id.setVisible(false);
-        
+
         editValue.setStepButtonsVisible(true);
         editValue.setMin(1);
         editValue.setMax(999999);
-        
+
+        // Стилизация кнопки сохранения
+        editButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        editButton.addClassName(LumoUtility.Margin.Top.MEDIUM);
+        editButton.getStyle().set("margin-left", "auto");
+
         editButton.addClickListener(e->{
             Material updateMaterial = materialService.findById(Long.valueOf(id.getValue())).orElse(null);
             updateMaterial.setName(editName.getValue());
@@ -83,28 +128,67 @@ public class MaterialsView extends VerticalLayout {
             updateGrid();
             editForm.setVisible(false);
         });
-        
+
         grid.addCellFocusListener(e->{
             id.setValue(String.valueOf(e.getItem().map(Material::getId).orElse(null)));
             editName.setValue(e.getItem().map(Material::getName).orElse(null));
             editValue.setValue(e.getItem().map(Material::getValue).orElse(null));
         });
-        
+
+        // Стилизация полей формы
+        styleTextField(editName);
+        styleIntegerField(editValue);
+
         editForm.add(id, editName, editValue, editButton);
         editForm.setVisible(false);
-        
-        add(grid, addMaterial, addButton, editForm);
-    }
-    
-    private void setupGrid(){
-        grid.setClassName("force-focus-outline");
-        
-        grid.addColumn(Material::getId).setHeader("ID").setSortable(true).setAutoWidth(true);
-        grid.addColumn(Material::getName).setHeader("Название").setSortable(true).setAutoWidth(true);
-        grid.addColumn(Material::getValue).setHeader("На складе").setSortable(true).setAutoWidth(true);
 
+        // Контейнер для кнопки добавления
+        HorizontalLayout buttonLayout = new HorizontalLayout(addButton);
+        buttonLayout.setWidthFull();
+        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+
+        // Контейнер для сетки и формы
+        Div content = new Div(grid, editForm);
+        content.addClassName(LumoUtility.Display.FLEX);
+        content.addClassName(LumoUtility.FlexDirection.COLUMN);
+        content.addClassName(LumoUtility.Gap.LARGE);
+        content.setSizeFull();
+
+        add(buttonLayout, content, addMaterial);
+    }
+
+    private void setupGrid(){
+        grid.addClassName("force-focus-outline");
+        grid.addThemeVariants(
+                com.vaadin.flow.component.grid.GridVariant.LUMO_WRAP_CELL_CONTENT,
+                com.vaadin.flow.component.grid.GridVariant.LUMO_COLUMN_BORDERS,
+                com.vaadin.flow.component.grid.GridVariant.LUMO_ROW_STRIPES
+        );
+        grid.setHeightFull();
+
+        // Стилизация колонок
+        grid.addColumn(Material::getId)
+                .setHeader("ID")
+                .setSortable(true)
+                .setAutoWidth(true)
+                .setFlexGrow(0);
+
+        grid.addColumn(Material::getName)
+                .setHeader("Название")
+                .setSortable(true)
+                .setAutoWidth(true);
+
+        grid.addColumn(Material::getValue)
+                .setHeader("На складе")
+                .setSortable(true)
+                .setAutoWidth(true);
+
+        // Стилизация контекстного меню
         GridContextMenu<Material> contextMenu = grid.addContextMenu();
-        contextMenu.addItem("Изменить", e->{
+
+        Button editMenuItem = new Button("Изменить", VaadinIcon.EDIT.create());
+        editMenuItem.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        contextMenu.addItem(editMenuItem, e->{
             if(editForm.isVisible()){
                 editForm.setVisible(false);
             }else if(!editForm.isVisible()){
@@ -114,17 +198,31 @@ public class MaterialsView extends VerticalLayout {
                 editValue.setValue(e.getItem().map(Material::getValue).orElse(null));
             }
         });
+
         if(currentUserService.getCurrentUserType().equals(UserType.ADMIN)) {
-            contextMenu.addItem("Удалить", e -> {
+            Button deleteMenuItem = new Button("Удалить", VaadinIcon.TRASH.create());
+            deleteMenuItem.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_TERTIARY);
+            contextMenu.addItem(deleteMenuItem, e -> {
                 materialService.delete(e.getItem().map(Material::getId).orElse(null));
                 updateGrid();
             });
         }
-        
     }
-    
+
     private void updateGrid(){
         List<Material> materials = materialService.findAll();
         grid.setItems(materials);
+    }
+
+    private void styleTextField(TextField textField) {
+        textField.setWidthFull();
+        textField.addClassName(LumoUtility.Margin.Bottom.SMALL);
+        textField.getElement().getThemeList().add("small");
+    }
+
+    private void styleIntegerField(IntegerField integerField) {
+        integerField.setWidthFull();
+        integerField.addClassName(LumoUtility.Margin.Bottom.SMALL);
+        integerField.getElement().getThemeList().add("small");
     }
 }

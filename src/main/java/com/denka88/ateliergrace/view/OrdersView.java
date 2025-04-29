@@ -3,15 +3,18 @@ package com.denka88.ateliergrace.view;
 import com.denka88.ateliergrace.MainLayout;
 import com.denka88.ateliergrace.model.*;
 import com.denka88.ateliergrace.service.*;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
-import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.popover.Popover;
 import com.vaadin.flow.component.textfield.NumberField;
@@ -19,6 +22,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.RolesAllowed;
 
 import java.util.HashSet;
@@ -40,7 +44,7 @@ public class OrdersView extends VerticalLayout {
     private TextField editOrderName = new TextField("Название заказа");
     private TextField editType = new TextField("Тип заказа");
     private MultiSelectComboBox<Material> editMaterials = new MultiSelectComboBox<>("Материалы");
-    private Button editButton = new Button("Сохранить изменения");
+    private Button editButton = new Button("Сохранить", VaadinIcon.CHECK.create());
 
     public OrdersView(OrderService orderService, MaterialService materialService,
                       CurrentUserService currentUserService) {
@@ -49,16 +53,34 @@ public class OrdersView extends VerticalLayout {
         this.currentUserService = currentUserService;
         this.grid = new Grid<>(Order.class, false);
 
+        // Общие стили для страницы
+        setPadding(true);
+        setSpacing(false);
+        setSizeFull();
+        addClassName(LumoUtility.Padding.LARGE);
+
         setupGrid();
         updateGrid();
 
-        // Настройка формы редактирования
-        editForm.setWidth("400px");
+        // Стилизация формы редактирования
+        editForm.setWidth("600px");
+        editForm.addClassNames(
+                LumoUtility.Padding.LARGE,
+                LumoUtility.BorderRadius.LARGE,
+                LumoUtility.BoxShadow.SMALL,
+                LumoUtility.Background.BASE
+        );
+
         id.setVisible(false);
 
-        // Настройка комбобокса материалов
         editMaterials.setItems(materialService.findAll());
         editMaterials.setItemLabelGenerator(Material::getName);
+        editMaterials.setWidthFull();
+
+        // Стилизация кнопки сохранения
+        editButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        editButton.addClassName(LumoUtility.Margin.Top.MEDIUM);
+        editButton.getStyle().set("margin-left", "auto");
 
         editButton.addClickListener(e -> {
             Order updateOrder = orderService.findById(Long.valueOf(id.getValue())).orElse(null);
@@ -69,43 +91,97 @@ public class OrdersView extends VerticalLayout {
                 orderService.update(updateOrder);
                 updateGrid();
                 editForm.setVisible(false);
+                Notification.show("Заказ обновлен")
+                        .setPosition(Notification.Position.TOP_END);
             }
         });
 
         grid.addCellFocusListener(e -> {
             id.setValue(String.valueOf(e.getItem().map(Order::getId).orElse(null)));
-            editOrderName.setValue(e.getItem().map(Order::getOrderName).orElse(null));
-            editType.setValue(e.getItem().map(Order::getType).orElse(null));
+            editOrderName.setValue(e.getItem().map(Order::getOrderName).orElse("Не доступно"));
+            editType.setValue(e.getItem().map(Order::getType).orElse("Не доступно"));
             editMaterials.clear();
+            if (e.getItem().isPresent()) {
+                editMaterials.select(e.getItem().get().getMaterials());
+            }
         });
+
+        // Стилизация полей формы
+        styleTextField(editOrderName);
+        styleTextField(editType);
 
         editForm.add(id, editOrderName, editType, editMaterials, editButton);
         editForm.setVisible(false);
 
-        add(grid, editForm);
+        // Контейнер для сетки и формы
+        Div content = new Div(grid, editForm);
+        content.addClassName(LumoUtility.Display.FLEX);
+        content.addClassName(LumoUtility.FlexDirection.COLUMN);
+        content.addClassName(LumoUtility.Gap.LARGE);
+        content.setSizeFull();
+
+        add(content);
     }
 
     private void setupGrid(){
-        grid.setClassName("force-focus-outline");
+        grid.addClassName("force-focus-outline");
+        grid.addThemeVariants(
+                com.vaadin.flow.component.grid.GridVariant.LUMO_WRAP_CELL_CONTENT,
+                com.vaadin.flow.component.grid.GridVariant.LUMO_COLUMN_BORDERS,
+                com.vaadin.flow.component.grid.GridVariant.LUMO_ROW_STRIPES
+        );
+        grid.setHeightFull();
 
-        grid.addColumn(Order::getId).setHeader("ID").setSortable(true).setAutoWidth(true);
-        grid.addColumn(Order::getClient).setHeader("Клиент").setSortable(true).setAutoWidth(true);
-        grid.addColumn(Order::getOrderName).setHeader("Название").setSortable(true).setAutoWidth(true);
-        grid.addColumn(Order::getType).setHeader("Тип заказа").setSortable(true).setAutoWidth(true);
-        grid.addColumn(Order::getOrderDate).setHeader("Дата создания").setSortable(true).setAutoWidth(true);
+        // Стилизация колонок
+        grid.addColumn(Order::getId)
+                .setHeader("ID")
+                .setSortable(true)
+                .setAutoWidth(true)
+                .setFlexGrow(0);
+
+        grid.addColumn(Order::getClient)
+                .setHeader("Клиент")
+                .setSortable(true)
+                .setAutoWidth(true);
+
+        grid.addColumn(Order::getOrderName)
+                .setHeader("Название")
+                .setSortable(true)
+                .setAutoWidth(true);
+
+        grid.addColumn(Order::getType)
+                .setHeader("Тип заказа")
+                .setSortable(true)
+                .setAutoWidth(true);
+
+        grid.addColumn(Order::getOrderDate)
+                .setHeader("Дата создания")
+                .setSortable(true)
+                .setAutoWidth(true);
+
         grid.addColumn(order -> {
-            if (order.getOrderEmployees() == null || order.getOrderEmployees().isEmpty()) {
-                return "Не назначено";
-            }
-            return order.getOrderEmployees().stream()
-                    .map(oe -> oe.getDateOfReady() != null ?
-                            oe.getDateOfReady().toString() : "Не указана")
-                    .collect(Collectors.joining(", "));
-        }).setHeader("Дата готовности").setSortable(true).setAutoWidth(true);
-        grid.addColumn(Order::getCost).setHeader("Стоимость").setSortable(true).setAutoWidth(true);
-        grid.addColumn(Order::getStatus).setHeader("Статус").setSortable(true).setAutoWidth(true);
+                    if (order.getOrderEmployees() == null || order.getOrderEmployees().isEmpty()) {
+                        return "Не назначено";
+                    }
+                    return order.getOrderEmployees().stream()
+                            .map(oe -> oe.getDateOfReady() != null ?
+                                    oe.getDateOfReady().toString() : "Не указана")
+                            .collect(Collectors.joining(", "));
+                }).setHeader("Дата готовности")
+                .setSortable(true)
+                .setAutoWidth(true);
 
-        grid.addColumn(order ->{
+        grid.addColumn(Order::getCost)
+                .setHeader("Стоимость")
+                .setSortable(true)
+                .setAutoWidth(true);
+
+        grid.addColumn(Order::getStatus)
+                .setHeader("Статус")
+                .setSortable(true)
+                .setAutoWidth(true);
+
+        grid.addColumn(order -> {
             if(order.getOrderEmployees() == null || order.getOrderEmployees().isEmpty()){
                 return "Не назначены";
             }
@@ -124,9 +200,12 @@ public class OrdersView extends VerticalLayout {
                     .collect(Collectors.joining(", "));
         }).setHeader("Материалы");
 
-        // Контекстное меню для редактирования
+        // Стилизация контекстного меню
         GridContextMenu<Order> contextMenu = grid.addContextMenu();
-        contextMenu.addItem("Изменить", e -> {
+
+        Button editMenuItem = new Button("Изменить", VaadinIcon.EDIT.create());
+        editMenuItem.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        contextMenu.addItem(editMenuItem, e -> {
             if (editForm.isVisible()) {
                 editForm.setVisible(false);
             } else {
@@ -135,49 +214,76 @@ public class OrdersView extends VerticalLayout {
                 editOrderName.setValue(e.getItem().map(Order::getOrderName).orElse(null));
                 editType.setValue(e.getItem().map(Order::getType).orElse(null));
                 editMaterials.clear();
+                if (e.getItem().isPresent()) {
+                    editMaterials.select(e.getItem().get().getMaterials());
+                }
             }
         });
-        
+
         if(currentUserService.getCurrentUserType() == UserType.ADMIN){
-            contextMenu.addItem("Удалить", e->{
+            Button deleteMenuItem = new Button("Удалить", VaadinIcon.TRASH.create());
+            deleteMenuItem.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_TERTIARY);
+            contextMenu.addItem(deleteMenuItem, e->{
                 orderService.delete(e.getItem().map(Order::getId).orElse(null));
                 updateGrid();
+                Notification.show("Заказ удален")
+                        .setPosition(Notification.Position.TOP_END);
             });
         }
 
         if(currentUserService.getCurrentUserType().equals(UserType.EMPLOYEE)) {
             grid.addColumn(new ComponentRenderer<>(order -> {
                 VerticalLayout actions = new VerticalLayout();
+                actions.setSpacing(false);
+                actions.setPadding(false);
+                actions.setWidthFull();
 
-                Button takeOrderBtn = new Button("Взять заказ");
-                Button confirm = new Button("Подтвердить");
+                // Кнопка "Взять заказ" с Popover
+                Button takeOrderBtn = new Button("Взять заказ", VaadinIcon.HANDS_UP.create());
+                takeOrderBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+                takeOrderBtn.setWidthFull();
 
                 Popover setCost = new Popover();
-                setCost.setWidth("210px");
+                setCost.setWidth("300px");
+                setCost.addClassName(LumoUtility.Padding.LARGE);
                 setCost.setModal(true);
                 setCost.setBackdropVisible(true);
 
                 NumberField cost = new NumberField("Стоимость заказа");
-                setCost.add(cost);
-                setCost.add(confirm);
+                cost.setWidthFull();
+                cost.setMin(0);
+
+                Button confirm = new Button("Подтвердить", VaadinIcon.CHECK.create());
+                confirm.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+                confirm.setWidthFull();
+
+                FormLayout popoverForm = new FormLayout(cost, confirm);
+                popoverForm.setWidthFull();
+                setCost.add(popoverForm);
+                setCost.setTarget(takeOrderBtn);
 
                 confirm.addClickListener(e -> {
-                    order.setCost(Float.parseFloat(cost.getValue().toString()));
+                    if (cost.isEmpty()) {
+                        Notification.show("Укажите стоимость")
+                                .setPosition(Notification.Position.TOP_END);
+                        return;
+                    }
+                    order.setCost(cost.getValue().floatValue());
                     orderService.takeOrder(order);
                     updateGrid();
+                    setCost.setVisible(false);
                     Notification.show("Вы взяли заказ #" + order.getId())
                             .setPosition(Notification.Position.TOP_END);
                 });
 
-                setCost.setTarget(takeOrderBtn);
                 boolean alreadyTaken = order.getOrderEmployees().stream()
                         .anyMatch(oe -> oe.getEmployee().getId().equals(currentUserService.getCurrentUserId()));
-                takeOrderBtn.setText("Взять заказ");
                 takeOrderBtn.setVisible(!alreadyTaken);
 
                 // Кнопка "Завершить"
-                Button completeBtn = new Button("Завершить");
+                Button completeBtn = new Button("Завершить", VaadinIcon.CHECK_CIRCLE.create());
                 completeBtn.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+                completeBtn.setWidthFull();
                 completeBtn.setVisible(alreadyTaken);
                 completeBtn.setEnabled(alreadyTaken && order.getStatus() != Status.COMPLETED);
                 completeBtn.addClickListener(e -> {
@@ -188,16 +294,19 @@ public class OrdersView extends VerticalLayout {
                 });
 
                 actions.add(takeOrderBtn, completeBtn);
-                actions.setSpacing(false);
-                actions.setPadding(false);
-
                 return actions;
-            })).setHeader("Действия");
+            })).setHeader("Действия").setAutoWidth(true).setFlexGrow(0);
         }
     }
 
     private void updateGrid(){
         List<Order> orders = orderService.findAll();
         grid.setItems(orders);
+    }
+
+    private void styleTextField(TextField textField) {
+        textField.setWidthFull();
+        textField.addClassName(LumoUtility.Margin.Bottom.SMALL);
+        textField.getElement().getThemeList().add("small");
     }
 }
