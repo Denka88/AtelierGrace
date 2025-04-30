@@ -91,7 +91,7 @@ public class OrganizationMaterialView extends VerticalLayout {
 
         Button post = new Button("Добавить", VaadinIcon.CHECK.create());
         post.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        post.setWidthFull();
+        post.setWidth("400px");
 
         post.addClickListener(e -> {
             if (materialSelect.isEmpty() || organizationSelect.isEmpty() ||
@@ -119,7 +119,6 @@ public class OrganizationMaterialView extends VerticalLayout {
 
                 organizationMaterialService.save(supplied);
                 updateGrid();
-                addSupplied.setVisible(false);
 
                 materialSelect.clear();
                 organizationSelect.clear();

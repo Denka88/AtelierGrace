@@ -90,7 +90,6 @@ public class MaterialsView extends VerticalLayout {
             material.setValue(value.getValue());
             materialService.save(material);
             updateGrid();
-            addMaterial.setVisible(false);
             name.clear();
             value.clear();
         });

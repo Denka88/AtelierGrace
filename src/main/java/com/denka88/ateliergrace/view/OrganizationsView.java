@@ -89,7 +89,6 @@ public class OrganizationsView extends VerticalLayout {
             organization.setAddress(address.getValue());
             organizationService.save(organization);
             updateGrid();
-            addOrganization.setVisible(false);
             name.clear();
             address.clear();
             Notification.show("Поставщик добавлен")

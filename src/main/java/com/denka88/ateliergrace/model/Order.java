@@ -34,7 +34,7 @@ public class Order {
     )
     private Set<Material> materials;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderEmployee> orderEmployees;
 
     public Order(Long id, Client client, String orderName, String type, LocalDate orderDate, float cost, Status status, Set<Material> materials, Set<OrderEmployee> orderEmployees) {
