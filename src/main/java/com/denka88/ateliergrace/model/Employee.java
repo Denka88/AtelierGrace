@@ -85,4 +85,17 @@ public class Employee {
     public void setOrders(Set<OrderEmployee> orders) {
         this.orders = orders;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return id != null && id.equals(employee.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

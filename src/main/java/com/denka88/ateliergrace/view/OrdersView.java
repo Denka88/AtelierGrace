@@ -3,7 +3,6 @@ package com.denka88.ateliergrace.view;
 import com.denka88.ateliergrace.MainLayout;
 import com.denka88.ateliergrace.model.*;
 import com.denka88.ateliergrace.service.*;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
@@ -24,9 +23,12 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.RolesAllowed;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.data.provider.ListDataProvider;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Route(value = "orders-list", layout = MainLayout.class)
@@ -36,8 +38,9 @@ public class OrdersView extends VerticalLayout {
 
     private final OrderService orderService;
     private final MaterialService materialService;
-    private final Grid<Order> grid;
     private final CurrentUserService currentUserService;
+    private final EmployeeService employeeService;
+    private final Grid<Order> grid;
 
     private FormLayout editForm = new FormLayout();
     private TextField id = new TextField("ID");
@@ -47,10 +50,11 @@ public class OrdersView extends VerticalLayout {
     private Button editButton = new Button("Сохранить", VaadinIcon.CHECK.create());
 
     public OrdersView(OrderService orderService, MaterialService materialService,
-                      CurrentUserService currentUserService) {
+                      CurrentUserService currentUserService, EmployeeService employeeService) {
         this.orderService = orderService;
         this.materialService = materialService;
         this.currentUserService = currentUserService;
+        this.employeeService = employeeService;
         this.grid = new Grid<>(Order.class, false);
 
         // Общие стили для страницы
@@ -58,6 +62,99 @@ public class OrdersView extends VerticalLayout {
         setSpacing(false);
         setSizeFull();
         addClassName(LumoUtility.Padding.LARGE);
+
+        Button filterButton = new Button("Фильтры", VaadinIcon.FILTER.create());
+        filterButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+        Popover filterPopover = new Popover();
+        filterPopover.setWidth("300px");
+
+        FormLayout filterForm = new FormLayout();
+        filterForm.setWidthFull();
+
+        ComboBox<Status> statusFilter = new ComboBox<>("Статус заказа");
+        statusFilter.setItems(Status.values());
+        statusFilter.setItemLabelGenerator(status -> {
+            switch (status) {
+                case PROGRESS: return "Выполняется";
+                case COMPLETED: return "Выполнен";
+                default: return status.toString();
+            }
+        });
+        statusFilter.setClearButtonVisible(true);
+
+        MultiSelectComboBox<Material> materialsFilter = new MultiSelectComboBox<>("Материалы в заказе");
+        materialsFilter.setItems(materialService.findAll());
+        materialsFilter.setItemLabelGenerator(Material::getName);
+        materialsFilter.setClearButtonVisible(true);
+
+        ComboBox<Employee> employeeFilter = new ComboBox<>("Сотрудник");
+        employeeFilter.setItems(employeeService.findAll());
+        employeeFilter.setItemLabelGenerator(employee ->
+                String.format("%s %s", employee.getSurname(), employee.getName()));
+        employeeFilter.setClearButtonVisible(true);
+
+        Button applyFilters = new Button("Применить", VaadinIcon.CHECK.create());
+        applyFilters.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        Button resetFilters = new Button("Сбросить", VaadinIcon.TRASH.create());
+        resetFilters.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_TERTIARY);
+
+        HorizontalLayout buttonsLayout = new HorizontalLayout(applyFilters, resetFilters);
+        buttonsLayout.setWidthFull();
+        buttonsLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+
+        filterForm.add(statusFilter, materialsFilter, employeeFilter, buttonsLayout);
+        filterPopover.add(filterForm);
+        filterPopover.setTarget(filterButton);
+
+        applyFilters.addClickListener(e -> {
+            List<Order> allOrders = orderService.findAll();
+            ListDataProvider<Order> dataProvider = new ListDataProvider<>(allOrders);
+
+            dataProvider.addFilter(order -> {
+                boolean statusMatch = statusFilter.getValue() == null ||
+                        order.getStatus() == statusFilter.getValue();
+
+                boolean materialsMatch = materialsFilter.getSelectedItems().isEmpty();
+
+                if (!materialsMatch) {
+                    Set<Long> selectedMaterialIds = materialsFilter.getSelectedItems()
+                            .stream()
+                            .map(Material::getId)
+                            .collect(Collectors.toSet());
+
+                    materialsMatch = order.getMaterials().stream()
+                            .map(Material::getId)
+                            .anyMatch(selectedMaterialIds::contains);
+                }
+                boolean employeeMatch = employeeFilter.getValue() == null;
+                if (!employeeMatch) {
+                    Long selectedEmployeeId = employeeFilter.getValue().getId();
+                    employeeMatch = order.getOrderEmployees().stream()
+                            .anyMatch(oe -> oe.getEmployee().getId().equals(selectedEmployeeId));
+                }
+
+                return statusMatch && materialsMatch && employeeMatch;
+            });
+
+            grid.setDataProvider(dataProvider);
+            filterPopover.close();
+        });
+
+        resetFilters.addClickListener(e -> {
+            statusFilter.clear();
+            materialsFilter.clear();
+            employeeFilter.clear();
+            grid.setItems(orderService.findAll());
+            filterPopover.close();
+        });
+
+        HorizontalLayout toolbar = new HorizontalLayout(filterButton);
+        toolbar.setWidthFull();
+        toolbar.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+        add(toolbar);
+
 
         setupGrid();
         updateGrid();
@@ -120,7 +217,7 @@ public class OrdersView extends VerticalLayout {
         content.addClassName(LumoUtility.Gap.LARGE);
         content.setSizeFull();
 
-        add(content);
+        add(toolbar, content);
     }
 
     private void setupGrid(){
@@ -160,16 +257,15 @@ public class OrdersView extends VerticalLayout {
                 .setAutoWidth(true);
 
         grid.addColumn(order -> {
-                    if (order.getOrderEmployees() == null || order.getOrderEmployees().isEmpty()) {
-                        return "Не назначено";
-                    }
-                    return order.getOrderEmployees().stream()
-                            .map(oe -> oe.getDateOfReady() != null ?
-                                    oe.getDateOfReady().toString() : "Не указана")
-                            .collect(Collectors.joining(", "));
-                }).setHeader("Дата готовности")
-                .setSortable(true)
-                .setAutoWidth(true);
+            if (order.getOrderEmployees() == null || order.getOrderEmployees().isEmpty()) {
+                return "Не назначено";
+            }
+            return order.getOrderEmployees().stream()
+                    .filter(oe -> oe.getDateOfReady() != null)
+                    .findFirst()
+                    .map(oe -> oe.getDateOfReady().toString())
+                    .orElse("Не указана");
+        }).setHeader("Дата готовности").setSortable(true).setAutoWidth(true);
 
         grid.addColumn(Order::getCost)
                 .setHeader("Стоимость")
@@ -238,10 +334,10 @@ public class OrdersView extends VerticalLayout {
                 actions.setPadding(false);
                 actions.setWidthFull();
 
-                // Кнопка "Взять заказ" с Popover
                 Button takeOrderBtn = new Button("Взять заказ", VaadinIcon.HANDS_UP.create());
                 takeOrderBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
                 takeOrderBtn.setWidthFull();
+                takeOrderBtn.setEnabled(order.getStatus().equals(Status.PROGRESS));
 
                 Popover setCost = new Popover();
                 setCost.setWidth("300px");
