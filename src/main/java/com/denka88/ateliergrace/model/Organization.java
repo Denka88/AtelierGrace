@@ -2,6 +2,9 @@ package com.denka88.ateliergrace.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "organizations")
 public class Organization {
@@ -12,15 +15,19 @@ public class Organization {
 
     private String name;
     private String address;
-    
+
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<OrganizationMaterial> materials;
+
 
     public Organization() {
     }
 
-    public Organization(Long id, String name, String address) {
+    public Organization(Long id, String name, String address, Set<OrganizationMaterial> materials) {
         this.id = id;
         this.name = name;
         this.address = address;
+        this.materials = materials;
     }
 
     public Long getId() {
@@ -50,5 +57,13 @@ public class Organization {
     @Override
     public String toString() {
         return name;
+    }
+
+    public Set<OrganizationMaterial> getMaterials() {
+        return materials;
+    }
+
+    public void setMaterials(Set<OrganizationMaterial> materials) {
+        this.materials = materials;
     }
 }

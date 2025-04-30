@@ -1,8 +1,10 @@
 package com.denka88.ateliergrace.impl;
 
 import com.denka88.ateliergrace.model.Organization;
+import com.denka88.ateliergrace.repo.OrganizationMaterialRepo;
 import com.denka88.ateliergrace.repo.OrganizationRepo;
 import com.denka88.ateliergrace.service.OrganizationService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,9 +14,11 @@ import java.util.Optional;
 public class OrganizationServiceImpl implements OrganizationService {
 
     private final OrganizationRepo organizationRepo;
+    private final OrganizationMaterialRepo organizationMaterialRepo;
 
-    public OrganizationServiceImpl(OrganizationRepo organizationRepo) {
+    public OrganizationServiceImpl(OrganizationRepo organizationRepo, OrganizationMaterialRepo organizationMaterialRepo) {
         this.organizationRepo = organizationRepo;
+        this.organizationMaterialRepo = organizationMaterialRepo;
     }
 
     @Override
@@ -33,7 +37,10 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
+        Organization organization = organizationRepo.findById(id).orElseThrow(()-> new RuntimeException("Поставщик не найден"));
+        organizationMaterialRepo.deleteByOrganizationId(id);
         organizationRepo.deleteById(id);
     }
 
