@@ -6,6 +6,7 @@ import com.denka88.ateliergrace.service.*;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
@@ -18,12 +19,14 @@ import com.vaadin.flow.component.popover.Popover;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.RolesAllowed;
 
 import java.util.List;
+import java.util.Objects;
 
 @Route(value = "supplies", layout = MainLayout.class)
 @PageTitle("Поставки")
@@ -48,11 +51,82 @@ public class OrganizationMaterialView extends VerticalLayout {
         setSpacing(false);
         setSizeFull();
         addClassName(LumoUtility.Padding.LARGE);
+        
+        Button filterButton = new Button("Фильтры", VaadinIcon.FILTER.create());
+        filterButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        
+        Popover filterPopover = new Popover();
+        filterPopover.setWidth("300px");
+        
+        FormLayout filterForm = new FormLayout();
+        filterForm.setWidthFull();
+
+        ComboBox<Organization> organizationFilter = new ComboBox<>("Поставщик");
+        organizationFilter.setItems(organizationService.findAll());
+        organizationFilter.setItemLabelGenerator(organization -> String.format("%s", organization.getName()));
+        organizationFilter.setClearButtonVisible(true);
+        
+        ComboBox<Material> materialFilter = new ComboBox<>("Material");
+        materialFilter.setItems(materialService.findAll());
+        materialFilter.setItemLabelGenerator(organization -> String.format("%s", organization.getName()));
+        materialFilter.setClearButtonVisible(true);
+        
+        Button applyFilters = new Button("Применить", VaadinIcon.CHECK.create());
+        applyFilters.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
+        Button resetFilters = new Button("Сбросить", VaadinIcon.TRASH.create());
+        resetFilters.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_TERTIARY);
+
+        HorizontalLayout buttonsLayout = new HorizontalLayout(applyFilters, resetFilters);
+        buttonsLayout.setWidthFull();
+        buttonsLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
+        
+        filterForm.add(organizationFilter, materialFilter, buttonsLayout);
+        filterPopover.add(filterForm);
+        filterPopover.setTarget(filterButton);
+        
+        applyFilters.addClickListener(e->{
+            List<OrganizationMaterial> allSupplies = organizationMaterialService.findAll();
+            ListDataProvider<OrganizationMaterial> dataProvider = new ListDataProvider<>(allSupplies);
+            
+            dataProvider.addFilter(supplied -> {
+                boolean organizationMatch = organizationFilter.getValue() == null;
+                if (!organizationMatch) {
+                    organizationMatch = Objects.equals(
+                            supplied.getOrganization().getId(),
+                            organizationFilter.getValue().getId()
+                    );
+                }
+
+                boolean materialMatch = materialFilter.getValue() == null;
+                if(!materialMatch) {
+                    materialMatch = Objects.equals(
+                            supplied.getMaterial().getId(),
+                            materialFilter.getValue().getId()
+                    );
+                }
+                
+                return organizationMatch && materialMatch;
+            });
+            
+            grid.setDataProvider(dataProvider);
+            filterPopover.close();
+        });
+        
+        resetFilters.addClickListener(e->{
+            organizationFilter.clear();
+            materialFilter.clear();
+            grid.setItems(organizationMaterialService.findAll());
+            filterPopover.close();
+        });
+
+        HorizontalLayout toolbar = new HorizontalLayout(filterButton);
+        toolbar.setWidthFull();
+        toolbar.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
         setupGrid();
         updateGrid();
 
-        // Стилизация кнопки добавления
         Button addButton = new Button("Добавить поставку", VaadinIcon.PLUS.create());
         addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         addButton.addClassName(LumoUtility.Margin.Bottom.LARGE);
@@ -146,7 +220,7 @@ public class OrganizationMaterialView extends VerticalLayout {
         Div content = new Div(grid);
         content.setSizeFull();
 
-        add(buttonLayout, content, addSupplied);
+        add(toolbar, buttonLayout, content, addSupplied);
     }
 
     private void setupGrid(){

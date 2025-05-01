@@ -153,7 +153,6 @@ public class OrdersView extends VerticalLayout {
         HorizontalLayout toolbar = new HorizontalLayout(filterButton);
         toolbar.setWidthFull();
         toolbar.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
-        add(toolbar);
 
 
         setupGrid();
