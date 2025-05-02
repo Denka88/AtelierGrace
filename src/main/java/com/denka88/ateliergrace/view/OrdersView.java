@@ -50,8 +50,6 @@ public class OrdersView extends VerticalLayout {
     private MultiSelectComboBox<Material> editMaterials = new MultiSelectComboBox<>("Материалы");
     private Button editButton = new Button("Сохранить", VaadinIcon.CHECK.create());
 
-    private final GridContextMenu<Order> contextMenu;
-
     private final TextArea detailsText = new TextArea();
 
     public OrdersView(OrderService orderService, MaterialService materialService,
@@ -61,7 +59,6 @@ public class OrdersView extends VerticalLayout {
         this.currentUserService = currentUserService;
         this.employeeService = employeeService;
         this.grid = new Grid<>(Order.class, false);
-        contextMenu = grid.addContextMenu();
 
         // Общие стили для страницы
         setPadding(true);
@@ -322,6 +319,8 @@ public class OrdersView extends VerticalLayout {
                     .map(Material::getName)
                     .collect(Collectors.joining(", "));
         }).setHeader("Материалы");
+        
+        GridContextMenu<Order> contextMenu = grid.addContextMenu();
 
         Button openDetails = new Button("Сведения о заказе", VaadinIcon.CHECK.create());
         openDetails.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
