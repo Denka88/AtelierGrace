@@ -17,6 +17,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.popover.Popover;
 import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
@@ -49,6 +50,10 @@ public class OrdersView extends VerticalLayout {
     private MultiSelectComboBox<Material> editMaterials = new MultiSelectComboBox<>("Материалы");
     private Button editButton = new Button("Сохранить", VaadinIcon.CHECK.create());
 
+    private final GridContextMenu<Order> contextMenu;
+
+    private final TextArea detailsText = new TextArea();
+
     public OrdersView(OrderService orderService, MaterialService materialService,
                       CurrentUserService currentUserService, EmployeeService employeeService) {
         this.orderService = orderService;
@@ -56,6 +61,7 @@ public class OrdersView extends VerticalLayout {
         this.currentUserService = currentUserService;
         this.employeeService = employeeService;
         this.grid = new Grid<>(Order.class, false);
+        contextMenu = grid.addContextMenu();
 
         // Общие стили для страницы
         setPadding(true);
@@ -154,7 +160,10 @@ public class OrdersView extends VerticalLayout {
         toolbar.setWidthFull();
         toolbar.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
-
+        detailsText.setLabel("Данные о заказе");
+        detailsText.setWidthFull();
+        detailsText.setReadOnly(true);        
+        detailsText.setVisible(false);
         setupGrid();
         updateGrid();
 
@@ -200,6 +209,21 @@ public class OrdersView extends VerticalLayout {
             if (e.getItem().isPresent()) {
                 editMaterials.select(e.getItem().get().getMaterials());
             }
+
+            String detailsId = String.valueOf(e.getItem().map(Order::getId).orElse(null));
+            String detailsClient = String.valueOf(e.getItem().map(Order::getClient).orElse(null));
+            String detailsOrderName = String.valueOf(e.getItem().map(Order::getOrderName).orElse(null));
+            String detailsType = String.valueOf(e.getItem().map(Order::getType).orElse(null));
+            String detailsOrderDate = String.valueOf(e.getItem().map(Order::getOrderDate).orElse(null));
+            String detailsCost = String.valueOf(e.getItem().map(Order::getCost).orElse(null));
+            String detailsStatus = String.valueOf(e.getItem().map(Order::getStatus).orElse(null));
+            String detailsEmployees = String.valueOf(e.getItem().map(Order::getOrderEmployees).orElse(null));
+            String detailsMaterials = String.valueOf(e.getItem().map(Order::getMaterials).orElse(null));
+
+            String areaContainer = String.format("ID: %s%nЗаказчик: %s%nНазвание заказа: %s%nТип заказа: %s%nДата создания: %s%n" +
+                    "Цена: %s%nСтатус заказа: %s%nСотрудники: %s%nМатериалы: %s%n", detailsId, detailsClient, detailsOrderName, detailsType, detailsOrderDate, detailsCost, detailsStatus, detailsEmployees, detailsMaterials);
+            
+            detailsText.setValue(areaContainer);
         });
 
         // Стилизация полей формы
@@ -208,9 +232,13 @@ public class OrdersView extends VerticalLayout {
 
         editForm.add(id, editOrderName, editType, editMaterials, editButton);
         editForm.setVisible(false);
+        
+        HorizontalLayout formAndDetails = new HorizontalLayout(editForm, detailsText);
+        formAndDetails.setWidthFull();
+        formAndDetails.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
         // Контейнер для сетки и формы
-        Div content = new Div(grid, editForm);
+        Div content = new Div(grid, formAndDetails);
         content.addClassName(LumoUtility.Display.FLEX);
         content.addClassName(LumoUtility.FlexDirection.COLUMN);
         content.addClassName(LumoUtility.Gap.LARGE);
@@ -295,11 +323,16 @@ public class OrdersView extends VerticalLayout {
                     .collect(Collectors.joining(", "));
         }).setHeader("Материалы");
 
-        // Стилизация контекстного меню
-        GridContextMenu<Order> contextMenu = grid.addContextMenu();
+        Button openDetails = new Button("Сведения о заказе", VaadinIcon.CHECK.create());
+        openDetails.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+        contextMenu.addItem(openDetails, e->{
+            detailsText.setVisible(!detailsText.isVisible());
+        });
 
         Button editMenuItem = new Button("Изменить", VaadinIcon.EDIT.create());
         editMenuItem.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        
         contextMenu.addItem(editMenuItem, e -> {
             if (editForm.isVisible()) {
                 editForm.setVisible(false);

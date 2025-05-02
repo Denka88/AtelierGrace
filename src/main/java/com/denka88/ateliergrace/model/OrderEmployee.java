@@ -68,4 +68,9 @@ public class OrderEmployee {
     public void setDateOfReady(LocalDate dateOfReady) {
         this.dateOfReady = dateOfReady;
     }
+
+    @Override
+    public String toString() {
+        return employee.getSurname() + " " + employee.getName() + " " + employee.getPatronymic();
+    }
 }
