@@ -51,6 +51,7 @@ public class OrdersView extends VerticalLayout {
     private Button editButton = new Button("Сохранить", VaadinIcon.CHECK.create());
 
     private final TextArea detailsText = new TextArea();
+    private final TextArea clientDetails = new TextArea();
 
     public OrdersView(OrderService orderService, MaterialService materialService,
                       CurrentUserService currentUserService, EmployeeService employeeService) {
@@ -161,6 +162,12 @@ public class OrdersView extends VerticalLayout {
         detailsText.setWidthFull();
         detailsText.setReadOnly(true);        
         detailsText.setVisible(false);
+        
+        clientDetails.setLabel("Данные о заказчике");
+        clientDetails.setWidthFull();
+        clientDetails.setReadOnly(true);
+        clientDetails.setVisible(false);
+        
         setupGrid();
         updateGrid();
 
@@ -217,9 +224,18 @@ public class OrdersView extends VerticalLayout {
             String detailsEmployees = String.valueOf(e.getItem().map(Order::getOrderEmployees).orElse(null));
             String detailsMaterials = String.valueOf(e.getItem().map(Order::getMaterials).orElse(null));
 
+            String id = String.valueOf(e.getItem().map(Order::getClient).map(Client::getId).orElse(null));
+            String surname = e.getItem().map(Order::getClient).map(Client::getSurname).orElse(null);
+            String name = e.getItem().map(Order::getClient).map(Client::getName).orElse(null);
+            String patronymic = e.getItem().map(Order::getClient).map(Client::getPatronymic).orElse(null);
+            String phone = e.getItem().map(Order::getClient).map(Client::getPhone).orElse(null);
+            
+            String clientDetailsContainer = String.format("ID: %s%nФамилия: %s%nИмя: %s%nОтчество: %s%nНомер телефона: %s%n", 
+                    id, surname, name, patronymic, phone);
             String areaContainer = String.format("ID: %s%nЗаказчик: %s%nНазвание заказа: %s%nТип заказа: %s%nДата создания: %s%n" +
                     "Цена: %s%nСтатус заказа: %s%nСотрудники: %s%nМатериалы: %s%n", detailsId, detailsClient, detailsOrderName, detailsType, detailsOrderDate, detailsCost, detailsStatus, detailsEmployees, detailsMaterials);
             
+            clientDetails.setValue(clientDetailsContainer);
             detailsText.setValue(areaContainer);
         });
 
@@ -230,7 +246,7 @@ public class OrdersView extends VerticalLayout {
         editForm.add(id, editOrderName, editType, editMaterials, editButton);
         editForm.setVisible(false);
         
-        HorizontalLayout formAndDetails = new HorizontalLayout(editForm, detailsText);
+        HorizontalLayout formAndDetails = new HorizontalLayout(editForm, detailsText, clientDetails);
         formAndDetails.setWidthFull();
         formAndDetails.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
@@ -327,6 +343,13 @@ public class OrdersView extends VerticalLayout {
 
         contextMenu.addItem(openDetails, e->{
             detailsText.setVisible(!detailsText.isVisible());
+        });
+
+        Button openClientDetails = new Button("Сведения о заказчике", VaadinIcon.CHECK.create());
+        openClientDetails.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        
+        contextMenu.addItem(openClientDetails, e->{
+           clientDetails.setVisible(!clientDetails.isVisible()); 
         });
 
         Button editMenuItem = new Button("Изменить", VaadinIcon.EDIT.create());
