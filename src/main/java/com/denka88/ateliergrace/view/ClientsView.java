@@ -12,6 +12,8 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
@@ -62,6 +64,9 @@ public class ClientsView extends VerticalLayout {
         );
 
         id.setVisible(false);
+        editName.setRequired(true);
+        editSurname.setRequired(true);
+        editPatronymic.setRequired(true);
 
         // Стилизация кнопки сохранения
         editButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -69,13 +74,20 @@ public class ClientsView extends VerticalLayout {
         editButton.getStyle().set("margin-left", "auto");
 
         editButton.addClickListener(e->{
+            if (editSurname.isEmpty() || editName.isEmpty() || editPatronymic.isEmpty()) {
+                showError("Заполните все поля");
+                return;
+            }
+            
             Client updateClient = clientService.findById(Long.valueOf(id.getValue())).orElse(null);
-            updateClient.setSurname(editSurname.getValue());
-            updateClient.setName(editName.getValue());
-            updateClient.setPatronymic(editPatronymic.getValue());
-            clientService.update(updateClient);
-            updateGrid();
-            editForm.setVisible(false);
+            if (updateClient != null) {
+                updateClient.setSurname(editSurname.getValue());
+                updateClient.setName(editName.getValue());
+                updateClient.setPatronymic(editPatronymic.getValue());
+                clientService.update(updateClient);
+                updateGrid();
+                editForm.setVisible(false);
+            }
         });
 
         grid.addCellFocusListener(e->{
@@ -175,5 +187,10 @@ public class ClientsView extends VerticalLayout {
         textField.setWidthFull();
         textField.addClassName(LumoUtility.Margin.Bottom.SMALL);
         textField.getElement().getThemeList().add("small");
+    }
+
+    private void showError(String message) {
+        Notification.show(message, 3000, Notification.Position.TOP_CENTER)
+                .addThemeVariants(NotificationVariant.LUMO_ERROR);
     }
 }

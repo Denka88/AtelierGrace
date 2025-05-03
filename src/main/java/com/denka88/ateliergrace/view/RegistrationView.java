@@ -38,13 +38,11 @@ public class RegistrationView extends VerticalLayout {
         this.authService = authService;
         this.clientService = clientService;
 
-        // Общие стили для страницы
         setPadding(false);
         setSpacing(false);
         setSizeFull();
         addClassName(LumoUtility.Background.CONTRAST_5);
 
-        // Создание карточки формы
         Div card = new Div();
         card.addClassNames(
                 LumoUtility.Padding.XLARGE,
@@ -55,20 +53,20 @@ public class RegistrationView extends VerticalLayout {
         );
         card.setWidth("500px");
 
-        // Заголовок формы
         H2 title = new H2("Регистрация");
         title.addClassNames(LumoUtility.Margin.Bottom.LARGE, LumoUtility.TextAlignment.CENTER);
 
-        // Поля формы
         TextField login = new TextField("Логин");
         login.setWidthFull();
         login.setRequired(true);
         login.setPlaceholder("Введите логин");
+        login.setMinLength(5);
 
         PasswordField password = new PasswordField("Пароль");
         password.setWidthFull();
         password.setRequired(true);
         password.setPlaceholder("Введите пароль");
+        password.setMinLength(8);
 
         PasswordField confirmPassword = new PasswordField("Подтвердите пароль");
         confirmPassword.setWidthFull();
@@ -94,13 +92,11 @@ public class RegistrationView extends VerticalLayout {
         phone.setRequired(true);
         phone.setPlaceholder("Введите номер телефона");
 
-        // Кнопка регистрации
         Button registerButton = new Button("Зарегистрироваться", VaadinIcon.USER_CHECK.create());
         registerButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         registerButton.setWidthFull();
         registerButton.addClassName(LumoUtility.Margin.Top.MEDIUM);
 
-        // Ссылка на страницу входа
         Span loginText = new Span("Уже есть аккаунт? ");
         RouterLink loginLink = new RouterLink("Войти", LoginView.class);
         loginLink.addClassName(LumoUtility.Margin.Left.SMALL);
@@ -117,6 +113,16 @@ public class RegistrationView extends VerticalLayout {
 
             if (!password.getValue().equals(confirmPassword.getValue())) {
                 showError("Пароли не совпадают");
+                return;
+            }
+            
+            if(login.getValue().length() < 5){
+                showError("Неподходящая длина логина. Минимум 5 символов");
+                return;
+            }
+            
+            if(password.getValue().length() < 8){
+                showError("Неподходящая длина пароля. Минимум 8 символов");
                 return;
             }
 
@@ -142,7 +148,6 @@ public class RegistrationView extends VerticalLayout {
             }
         });
 
-        // Форма с адаптивным дизайном
         FormLayout form = new FormLayout();
         form.addClassNames(LumoUtility.Padding.NONE);
         form.add(
@@ -160,7 +165,6 @@ public class RegistrationView extends VerticalLayout {
 
         card.add(form);
 
-        // Центрирование формы
         Div container = new Div(card);
         container.setSizeFull();
         container.addClassNames(

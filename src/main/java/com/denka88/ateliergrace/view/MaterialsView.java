@@ -13,6 +13,8 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -109,6 +111,9 @@ public class MaterialsView extends VerticalLayout {
         );
 
         id.setVisible(false);
+        
+        editName.setMinLength(3);
+        editName.setRequired(true);
 
         editValue.setStepButtonsVisible(true);
         editValue.setMin(1);
@@ -120,12 +125,26 @@ public class MaterialsView extends VerticalLayout {
         editButton.getStyle().set("margin-left", "auto");
 
         editButton.addClickListener(e->{
+            if(editName.isEmpty()){
+                showError("Заполните все поля");
+                return;
+            }
+            
+            if(editName.getValue().length() < 3){
+                showError("Неподходящая длина названия. Минимум 3 символа");
+                return;
+            }
+            
             Material updateMaterial = materialService.findById(Long.valueOf(id.getValue())).orElse(null);
-            updateMaterial.setName(editName.getValue());
-            updateMaterial.setValue(editValue.getValue());
-            materialService.update(updateMaterial);
-            updateGrid();
-            editForm.setVisible(false);
+            if (updateMaterial != null) {
+                updateMaterial.setName(editName.getValue());
+                updateMaterial.setValue(editValue.getValue());
+                materialService.update(updateMaterial);
+                updateGrid();
+                editForm.setVisible(false);
+                Notification.show("Материал обновлен")
+                        .setPosition(Notification.Position.TOP_END);
+            }
         });
 
         grid.addCellFocusListener(e->{
@@ -223,5 +242,10 @@ public class MaterialsView extends VerticalLayout {
         integerField.setWidthFull();
         integerField.addClassName(LumoUtility.Margin.Bottom.SMALL);
         integerField.getElement().getThemeList().add("small");
+    }
+
+    private void showError(String message) {
+        Notification.show(message, 3000, Notification.Position.TOP_CENTER)
+                .addThemeVariants(NotificationVariant.LUMO_ERROR);
     }
 }

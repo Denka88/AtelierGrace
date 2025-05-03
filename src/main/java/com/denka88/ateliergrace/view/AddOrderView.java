@@ -68,6 +68,7 @@ public class AddOrderView extends VerticalLayout {
         materials.setItemLabelGenerator(Material::getName);
         materials.setWidthFull();
         materials.setPlaceholder("Выберите материалы");
+        materials.setRequired(true);
 
         // Стилизация кнопки
         Button create = new Button("Создать заказ", VaadinIcon.CHECK.create());
@@ -76,9 +77,7 @@ public class AddOrderView extends VerticalLayout {
 
         create.addClickListener(e -> {
             if (orderName.isEmpty() || type.isEmpty()) {
-                Notification.show("Заполните все обязательные поля", 3000,
-                                Notification.Position.TOP_CENTER)
-                        .addThemeVariants(NotificationVariant.LUMO_ERROR);
+                showError("Заполните все поля");
                 return;
             }
 
@@ -120,5 +119,10 @@ public class AddOrderView extends VerticalLayout {
 
         add(container);
         setAlignItems(Alignment.CENTER);
+    }
+
+    private void showError(String message) {
+        Notification.show(message, 3000, Notification.Position.TOP_CENTER)
+                .addThemeVariants(NotificationVariant.LUMO_ERROR);
     }
 }

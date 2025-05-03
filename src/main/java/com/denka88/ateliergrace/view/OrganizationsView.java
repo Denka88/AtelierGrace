@@ -14,6 +14,7 @@ import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -101,6 +102,12 @@ public class OrganizationsView extends VerticalLayout {
         addOrganization.setTarget(addButton);
 
         id.setVisible(false);
+        
+        editName.setMinLength(3);
+        editName.setRequired(true);
+        
+        editAddress.setMinLength(5);
+        editAddress.setRequired(true);
 
         // Стилизация формы редактирования
         editForm.setWidth("400px");
@@ -117,6 +124,21 @@ public class OrganizationsView extends VerticalLayout {
         editButton.getStyle().set("margin-left", "auto");
 
         editButton.addClickListener(e->{
+            if(editName.isEmpty() || editAddress.isEmpty()){
+                showError("Заполните все поля");
+                return;
+            }
+            
+            if(editName.getValue().length() < 3){
+                showError("Неподходящая длина названия. Минимум 3 символа");
+                return;
+            }
+            
+            if(editAddress.getValue().length() < 5){
+                showError("Неподходящая длина адреса. Минимум 5 символов");
+                return;
+            }
+            
             Organization updateOrganization = organizationService.findById(Long.valueOf(id.getValue())).orElse(null);
             if (updateOrganization != null) {
                 updateOrganization.setName(editName.getValue());
@@ -220,5 +242,10 @@ public class OrganizationsView extends VerticalLayout {
         textField.setWidthFull();
         textField.addClassName(LumoUtility.Margin.Bottom.SMALL);
         textField.getElement().getThemeList().add("small");
+    }
+
+    private void showError(String message) {
+        Notification.show(message, 3000, Notification.Position.TOP_CENTER)
+                .addThemeVariants(NotificationVariant.LUMO_ERROR);
     }
 }

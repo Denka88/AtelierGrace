@@ -12,6 +12,7 @@ import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -181,6 +182,12 @@ public class OrdersView extends VerticalLayout {
         );
 
         id.setVisible(false);
+        
+        editOrderName.setMinLength(3);
+        editOrderName.setRequired(true);
+        
+        editType.setMinLength(3);
+        editType.setRequired(true);
 
         editMaterials.setItems(materialService.findAll());
         editMaterials.setItemLabelGenerator(Material::getName);
@@ -192,6 +199,17 @@ public class OrdersView extends VerticalLayout {
         editButton.getStyle().set("margin-left", "auto");
 
         editButton.addClickListener(e -> {
+            if (editOrderName.isEmpty() || editMaterials.isEmpty() || editType.isEmpty()) {
+                showError("Заполните все поля");
+                return;
+            }
+            
+            if (editOrderName.getValue().length() < 3 || editType.getValue().length() < 3){
+                showError("Неподходящая длина. Минимум 3 символа");
+                return;
+            }
+            
+            
             Order updateOrder = orderService.findById(Long.valueOf(id.getValue())).orElse(null);
             if (updateOrder != null) {
                 updateOrder.setOrderName(editOrderName.getValue());
@@ -459,4 +477,10 @@ public class OrdersView extends VerticalLayout {
         textField.addClassName(LumoUtility.Margin.Bottom.SMALL);
         textField.getElement().getThemeList().add("small");
     }
+
+    private void showError(String message) {
+        Notification.show(message, 3000, Notification.Position.TOP_CENTER)
+                .addThemeVariants(NotificationVariant.LUMO_ERROR);
+    }
+    
 }

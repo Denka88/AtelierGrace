@@ -60,11 +60,13 @@ public class EmplRegistrationView extends VerticalLayout {
         login.setWidthFull();
         login.setRequired(true);
         login.setPlaceholder("Введите логин сотрудника");
+        login.setMinLength(5);
 
         PasswordField password = new PasswordField("Пароль");
         password.setWidthFull();
         password.setRequired(true);
         password.setPlaceholder("Введите пароль");
+        password.setMinLength(8);
 
         PasswordField confirmPassword = new PasswordField("Подтверждение пароля");
         confirmPassword.setWidthFull();
@@ -105,6 +107,15 @@ public class EmplRegistrationView extends VerticalLayout {
 
             if (!password.getValue().equals(confirmPassword.getValue())) {
                 showError("Пароли не совпадают");
+                return;
+            }
+            
+            if (login.getValue().length() < 5){
+                showError("Неподходящая длина логина. Минимум 5 символов");
+            }
+
+            if(password.getValue().length() < 8){
+                showError("Неподходящая длина пароля. Минимум 8 символов");
                 return;
             }
 

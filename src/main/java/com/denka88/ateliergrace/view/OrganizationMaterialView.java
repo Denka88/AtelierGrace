@@ -157,11 +157,13 @@ public class OrganizationMaterialView extends VerticalLayout {
         NumberField cost = new NumberField("Цена");
         cost.setWidthFull();
         cost.setMin(0);
+        cost.setRequired(true);
 
         IntegerField value = new IntegerField("Количество");
         value.setWidthFull();
         value.setMin(1);
         value.setStepButtonsVisible(true);
+        value.setRequired(true);
 
         Button post = new Button("Добавить", VaadinIcon.CHECK.create());
         post.addThemeVariants(ButtonVariant.LUMO_PRIMARY);

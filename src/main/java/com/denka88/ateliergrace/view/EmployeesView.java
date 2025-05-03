@@ -13,6 +13,8 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -73,21 +75,31 @@ public class EmployeesView extends VerticalLayout {
         );
 
         id.setVisible(false);
+        editSurname.setRequired(true);
+        editName.setRequired(true);
+        editPatronymic.setRequired(true);
+        editPost.setRequired(true);
 
-        // Стилизация кнопки сохранения
         editButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         editButton.addClassName(LumoUtility.Margin.Top.MEDIUM);
         editButton.getStyle().set("margin-left", "auto");
 
         editButton.addClickListener(e->{
+            if (editSurname.isEmpty() || editName.isEmpty() || editPatronymic.isEmpty() || editPost.isEmpty()){
+                showError("Заполните все поля");
+                return;
+            }
+            
             Employee updateEmployee = employeeService.findById(Long.valueOf(id.getValue())).orElse(null);
-            updateEmployee.setSurname(editSurname.getValue());
-            updateEmployee.setName(editName.getValue());
-            updateEmployee.setPatronymic(editPatronymic.getValue());
-            updateEmployee.setPost(editPost.getValue());
-            employeeService.update(updateEmployee);
-            updateGrid();
-            editForm.setVisible(false);
+            if (updateEmployee != null) {
+                updateEmployee.setSurname(editSurname.getValue());
+                updateEmployee.setName(editName.getValue());
+                updateEmployee.setPatronymic(editPatronymic.getValue());
+                updateEmployee.setPost(editPost.getValue());
+                employeeService.update(updateEmployee);
+                updateGrid();
+                editForm.setVisible(false);
+            }
         });
 
         grid.addCellFocusListener(e->{
@@ -98,7 +110,6 @@ public class EmployeesView extends VerticalLayout {
             editPost.setValue(e.getItem().map(Employee::getPost).orElse("Не доступно"));
         });
 
-        // Стилизация полей формы
         styleTextField(editSurname);
         styleTextField(editName);
         styleTextField(editPatronymic);
@@ -107,12 +118,10 @@ public class EmployeesView extends VerticalLayout {
         editForm.add(id, editSurname, editName, editPatronymic, editPost, editButton);
         editForm.setVisible(false);
 
-        // Контейнер для кнопки добавления
         HorizontalLayout buttonLayout = new HorizontalLayout(addEmployee);
         buttonLayout.setWidthFull();
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
-        // Контейнер для сетки и формы
         Div content = new Div(grid, editForm);
         content.addClassName(LumoUtility.Display.FLEX);
         content.addClassName(LumoUtility.FlexDirection.COLUMN);
@@ -131,7 +140,6 @@ public class EmployeesView extends VerticalLayout {
         );
         grid.setHeightFull();
 
-        // Стилизация колонок
         grid.addColumn(Employee::getId)
                 .setHeader("ID")
                 .setSortable(true)
@@ -158,7 +166,6 @@ public class EmployeesView extends VerticalLayout {
                 .setSortable(true)
                 .setAutoWidth(true);
 
-        // Стилизация контекстного меню
         GridContextMenu<Employee> contextMenu = grid.addContextMenu();
 
         Button editMenuItem = new Button("Изменить", VaadinIcon.EDIT.create());
@@ -195,5 +202,10 @@ public class EmployeesView extends VerticalLayout {
         textField.setWidthFull();
         textField.addClassName(LumoUtility.Margin.Bottom.SMALL);
         textField.getElement().getThemeList().add("small");
+    }
+
+    private void showError(String message) {
+        Notification.show(message, 3000, Notification.Position.TOP_CENTER)
+                .addThemeVariants(NotificationVariant.LUMO_ERROR);
     }
 }
