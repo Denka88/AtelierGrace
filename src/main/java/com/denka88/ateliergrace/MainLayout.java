@@ -1,11 +1,15 @@
 package com.denka88.ateliergrace;
 
+import com.denka88.ateliergrace.model.UserType;
+import com.denka88.ateliergrace.service.CurrentUserService;
 import com.denka88.ateliergrace.view.*;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -18,9 +22,12 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 @Layout
 @AnonymousAllowed
 public class MainLayout extends AppLayout {
+    
+    private final CurrentUserService currentUserService;
 
-    public MainLayout(AuthenticationContext authenticationContext) {
-        // Стилизованный заголовок
+    public MainLayout(AuthenticationContext authenticationContext, CurrentUserService currentUserService) {
+        this.currentUserService = currentUserService;
+        
         H1 title = new H1("Грация");
         title.getStyle()
                 .set("font-size", "var(--lumo-font-size-xxl)")
@@ -34,20 +41,39 @@ public class MainLayout extends AppLayout {
         title.addClickListener(e -> title.getStyle().set("color", "var(--lumo-primary-color-50pct)"));
         title.addClickListener(e -> title.getStyle().set("color", "var(--lumo-primary-text-color)"));
 
-        // Навигационная панель
         HorizontalLayout navigation = getNavigation(authenticationContext);
 
-        // Кнопка выхода с иконкой
+        HorizontalLayout userControls = new HorizontalLayout();
+        userControls.setSpacing(false);
+        userControls.setAlignItems(FlexComponent.Alignment.CENTER);
+        userControls.addClassName(LumoUtility.Gap.SMALL);
+        
+        Span username = new Span();
+        username.getStyle()
+                .set("font-weight", "500")
+                .set("color", "var(--lumo-secondary-text-color)")
+                .set("margin-right", "var(--lumo-space-s)");
+        currentUserService.getCurrentAuth().ifPresent(auth -> {
+            username.setText(auth.getLogin());
+        });
+
+        Icon userIcon = VaadinIcon.USER.create();
+        userIcon.getStyle()
+                .set("width", "var(--lumo-icon-size-s)")
+                .set("height", "var(--lumo-icon-size-s)")
+                .set("color", "var(--lumo-contrast-60pct)");
+
         Button logout = new Button("Выйти", VaadinIcon.SIGN_OUT.create(),
                 e -> authenticationContext.logout());
         logout.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
         logout.getStyle()
-                .set("margin-right", "var(--lumo-space-m)")
-                .set("color", "var(--lumo-error-text-color)");
-        logout.addClassName(LumoUtility.Padding.Horizontal.MEDIUM);
+                .set("margin-left", "var(--lumo-space-s)")
+                .set("color", "var(--lumo-error-text-color)")
+                .set("padding", "0");
 
-        // Контейнер для элементов навбара
-        HorizontalLayout navbarLayout = new HorizontalLayout(title, navigation, logout);
+        userControls.add(userIcon, username, logout);
+
+        HorizontalLayout navbarLayout = new HorizontalLayout(title, navigation, userControls);
         navbarLayout.setWidthFull();
         navbarLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
         navbarLayout.setAlignItems(FlexComponent.Alignment.CENTER);
