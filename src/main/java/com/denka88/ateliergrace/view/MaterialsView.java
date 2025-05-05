@@ -49,7 +49,6 @@ public class MaterialsView extends VerticalLayout {
         this.currentUserService = currentUserService;
         this.grid = new Grid<>(Material.class, false);
 
-        // Общие стили для страницы
         setPadding(true);
         setSpacing(false);
         setSizeFull();
@@ -58,12 +57,10 @@ public class MaterialsView extends VerticalLayout {
         setupGrid();
         updateGrid();
 
-        // Стилизация кнопки добавления
         Button addButton = new Button("Добавить материал", VaadinIcon.PLUS.create());
         addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         addButton.addClassName(LumoUtility.Margin.Bottom.LARGE);
 
-        // Стилизация popover для добавления
         Popover addMaterial = new Popover();
         addMaterial.setModal(true);
         addMaterial.setBackdropVisible(true);
@@ -101,7 +98,6 @@ public class MaterialsView extends VerticalLayout {
         addMaterial.add(popoverForm);
         addMaterial.setTarget(addButton);
 
-        // Стилизация формы редактирования
         editForm.setWidth("400px");
         editForm.addClassNames(
                 LumoUtility.Padding.LARGE,
@@ -119,7 +115,6 @@ public class MaterialsView extends VerticalLayout {
         editValue.setMin(1);
         editValue.setMax(999999);
 
-        // Стилизация кнопки сохранения
         editButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         editButton.addClassName(LumoUtility.Margin.Top.MEDIUM);
         editButton.getStyle().set("margin-left", "auto");
@@ -153,19 +148,16 @@ public class MaterialsView extends VerticalLayout {
             editValue.setValue(e.getItem().map(Material::getValue).orElse(null));
         });
 
-        // Стилизация полей формы
         styleTextField(editName);
         styleIntegerField(editValue);
 
         editForm.add(id, editName, editValue, editButton);
         editForm.setVisible(false);
 
-        // Контейнер для кнопки добавления
         HorizontalLayout buttonLayout = new HorizontalLayout(addButton);
         buttonLayout.setWidthFull();
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
-        // Контейнер для сетки и формы
         Div content = new Div(grid, editForm);
         content.addClassName(LumoUtility.Display.FLEX);
         content.addClassName(LumoUtility.FlexDirection.COLUMN);
@@ -184,7 +176,6 @@ public class MaterialsView extends VerticalLayout {
         );
         grid.setHeightFull();
 
-        // Стилизация колонок
         grid.addColumn(Material::getId)
                 .setHeader("ID")
                 .setSortable(true)
@@ -201,7 +192,6 @@ public class MaterialsView extends VerticalLayout {
                 .setSortable(true)
                 .setAutoWidth(true);
 
-        // Стилизация контекстного меню
         GridContextMenu<Material> contextMenu = grid.addContextMenu();
 
         Button editMenuItem = new Button("Изменить", VaadinIcon.EDIT.create());

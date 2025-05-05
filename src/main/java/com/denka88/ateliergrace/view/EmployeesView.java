@@ -48,7 +48,6 @@ public class EmployeesView extends VerticalLayout {
         this.currentUserService = currentUserService;
         this.grid = new Grid<>(Employee.class, false);
 
-        // Общие стили для страницы
         setPadding(true);
         setSpacing(false);
         setSizeFull();
@@ -57,7 +56,6 @@ public class EmployeesView extends VerticalLayout {
         setupGrid();
         updateGrid();
 
-        // Стилизация кнопки добавления
         Button addEmployee = new Button("Добавить сотрудника", VaadinIcon.PLUS.create());
         addEmployee.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         addEmployee.addClassName(LumoUtility.Margin.Bottom.LARGE);
@@ -65,7 +63,6 @@ public class EmployeesView extends VerticalLayout {
             UI.getCurrent().navigate("/employee-registration");
         });
 
-        // Стилизация формы редактирования
         editForm.setWidth("400px");
         editForm.addClassNames(
                 LumoUtility.Padding.LARGE,

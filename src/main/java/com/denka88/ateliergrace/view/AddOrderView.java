@@ -37,13 +37,11 @@ public class AddOrderView extends VerticalLayout {
         this.materialService = materialService;
         this.currentUserService = currentUserService;
 
-        // Общие стили для страницы
         setPadding(true);
         setSpacing(false);
         setSizeFull();
         addClassName(LumoUtility.Padding.LARGE);
 
-        // Создание формы
         FormLayout form = new FormLayout();
         form.addClassName(LumoUtility.Padding.LARGE);
         form.addClassName(LumoUtility.BorderRadius.LARGE);
@@ -52,7 +50,6 @@ public class AddOrderView extends VerticalLayout {
         form.setWidth("500px");
         form.getStyle().set("margin", "auto");
 
-        // Поля формы
         TextField orderName = new TextField("Название заказа");
         orderName.setWidthFull();
         orderName.setRequired(true);
@@ -70,7 +67,6 @@ public class AddOrderView extends VerticalLayout {
         materials.setPlaceholder("Выберите материалы");
         materials.setRequired(true);
 
-        // Стилизация кнопки
         Button create = new Button("Создать заказ", VaadinIcon.CHECK.create());
         create.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         create.setWidthFull();
@@ -105,13 +101,11 @@ public class AddOrderView extends VerticalLayout {
             }
         });
 
-        // Добавление элементов в форму
         form.add(orderName, type, materials, create);
         form.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1)
         );
 
-        // Центрирование формы
         Div container = new Div(form);
         container.setWidthFull();
         container.addClassName(LumoUtility.Display.FLEX);

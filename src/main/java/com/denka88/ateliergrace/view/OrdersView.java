@@ -62,7 +62,6 @@ public class OrdersView extends VerticalLayout {
         this.employeeService = employeeService;
         this.grid = new Grid<>(Order.class, false);
 
-        // Общие стили для страницы
         setPadding(true);
         setSpacing(false);
         setSizeFull();
@@ -172,7 +171,6 @@ public class OrdersView extends VerticalLayout {
         setupGrid();
         updateGrid();
 
-        // Стилизация формы редактирования
         editForm.setWidth("600px");
         editForm.addClassNames(
                 LumoUtility.Padding.LARGE,
@@ -193,7 +191,6 @@ public class OrdersView extends VerticalLayout {
         editMaterials.setItemLabelGenerator(Material::getName);
         editMaterials.setWidthFull();
 
-        // Стилизация кнопки сохранения
         editButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         editButton.addClassName(LumoUtility.Margin.Top.MEDIUM);
         editButton.getStyle().set("margin-left", "auto");
@@ -257,7 +254,6 @@ public class OrdersView extends VerticalLayout {
             detailsText.setValue(areaContainer);
         });
 
-        // Стилизация полей формы
         styleTextField(editOrderName);
         styleTextField(editType);
 
@@ -268,7 +264,6 @@ public class OrdersView extends VerticalLayout {
         formAndDetails.setWidthFull();
         formAndDetails.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
-        // Контейнер для сетки и формы
         Div content = new Div(grid, formAndDetails);
         content.addClassName(LumoUtility.Display.FLEX);
         content.addClassName(LumoUtility.FlexDirection.COLUMN);
@@ -287,7 +282,6 @@ public class OrdersView extends VerticalLayout {
         );
         grid.setHeightFull();
 
-        // Стилизация колонок
         grid.addColumn(Order::getId)
                 .setHeader("ID")
                 .setSortable(true)

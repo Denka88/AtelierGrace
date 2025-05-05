@@ -34,13 +34,11 @@ public class EmplRegistrationView extends VerticalLayout {
         this.authService = authService;
         this.employeeService = employeeService;
 
-        // Общие стили для страницы
         setPadding(false);
         setSpacing(false);
         setSizeFull();
         addClassName(LumoUtility.Padding.LARGE);
 
-        // Создание карточки формы
         Div card = new Div();
         card.addClassNames(
                 LumoUtility.Padding.XLARGE,
@@ -51,11 +49,9 @@ public class EmplRegistrationView extends VerticalLayout {
         );
         card.setWidth("600px");
 
-        // Заголовок формы
         H2 title = new H2("Регистрация сотрудника");
         title.addClassNames(LumoUtility.Margin.Bottom.LARGE, LumoUtility.TextAlignment.CENTER);
 
-        // Поля формы
         TextField login = new TextField("Логин");
         login.setWidthFull();
         login.setRequired(true);
@@ -92,7 +88,6 @@ public class EmplRegistrationView extends VerticalLayout {
         post.setRequired(true);
         post.setPlaceholder("Введите должность");
 
-        // Кнопка регистрации
         Button registerButton = new Button("Зарегистрировать", VaadinIcon.USER_CHECK.create());
         registerButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         registerButton.setWidthFull();
@@ -141,7 +136,6 @@ public class EmplRegistrationView extends VerticalLayout {
             }
         });
 
-        // Форма с адаптивным дизайном
         FormLayout form = new FormLayout();
         form.addClassNames(LumoUtility.Padding.NONE);
         form.add(
@@ -160,7 +154,6 @@ public class EmplRegistrationView extends VerticalLayout {
 
         card.add(form);
 
-        // Центрирование формы
         Div container = new Div(card);
         container.setSizeFull();
         container.addClassNames(

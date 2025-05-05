@@ -45,7 +45,6 @@ public class ClientsView extends VerticalLayout {
         this.currentUserService = currentUserService;
         this.grid = new Grid<>(Client.class, false);
 
-        // Общие стили для страницы
         setPadding(true);
         setSpacing(false);
         setSizeFull();
@@ -54,7 +53,6 @@ public class ClientsView extends VerticalLayout {
         setupGrid();
         updateGrid();
 
-        // Стилизация формы редактирования
         editForm.setWidth("400px");
         editForm.addClassNames(
                 LumoUtility.Padding.LARGE,
@@ -68,7 +66,6 @@ public class ClientsView extends VerticalLayout {
         editSurname.setRequired(true);
         editPatronymic.setRequired(true);
 
-        // Стилизация кнопки сохранения
         editButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         editButton.addClassName(LumoUtility.Margin.Top.MEDIUM);
         editButton.getStyle().set("margin-left", "auto");
@@ -97,7 +94,6 @@ public class ClientsView extends VerticalLayout {
             editPatronymic.setValue(e.getItem().map(Client::getPatronymic).orElse("Не доступно"));
         });
 
-        // Стилизация полей формы
         styleTextField(editSurname);
         styleTextField(editName);
         styleTextField(editPatronymic);
@@ -105,7 +101,6 @@ public class ClientsView extends VerticalLayout {
         editForm.add(id, editSurname, editName, editPatronymic, editButton);
         editForm.setVisible(false);
 
-        // Контейнер для сетки и формы
         Div content = new Div(grid, editForm);
         content.addClassName(LumoUtility.Display.FLEX);
         content.addClassName(LumoUtility.FlexDirection.COLUMN);
@@ -124,7 +119,6 @@ public class ClientsView extends VerticalLayout {
         );
         grid.setHeightFull();
 
-        // Стилизация колонок
         grid.addColumn(Client::getId)
                 .setHeader("ID")
                 .setSortable(true)
@@ -151,7 +145,6 @@ public class ClientsView extends VerticalLayout {
                 .setSortable(true)
                 .setAutoWidth(true);
 
-        // Стилизация контекстного меню
         GridContextMenu<Client> contextMenu = grid.addContextMenu();
 
         Button editMenuItem = new Button("Изменить", VaadinIcon.EDIT.create());

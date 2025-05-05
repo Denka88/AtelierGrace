@@ -1,6 +1,5 @@
 package com.denka88.ateliergrace.view;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.login.LoginForm;
@@ -43,9 +42,7 @@ public class LoginView extends Main implements BeforeEnterObserver {
         login.setAction("login");
 
         LoginI18n loginForm = LoginI18n.createDefault();
-        loginForm.setHeader(new LoginI18n.Header());
-        loginForm.getHeader().setTitle("Грация");
-        loginForm.getHeader().setDescription("Войдите в свою учетную запись");
+        loginForm.getForm().setTitle("Войти");
         loginForm.getForm().setUsername("Логин");
         loginForm.getForm().setPassword("Пароль");
         loginForm.getForm().setSubmit("Войти");

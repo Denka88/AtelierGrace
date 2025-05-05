@@ -28,7 +28,6 @@ public class MyOrdersView extends VerticalLayout {
         this.currentUserService = currentUserService;
         this.grid = new Grid<>(Order.class, false);
 
-        // Общие стили для страницы
         setPadding(true);
         setSpacing(false);
         setSizeFull();
@@ -37,7 +36,6 @@ public class MyOrdersView extends VerticalLayout {
         setupGrid();
         updateGrid();
 
-        // Контейнер для сетки
         Div content = new Div(grid);
         content.setSizeFull();
         add(content);
@@ -52,7 +50,6 @@ public class MyOrdersView extends VerticalLayout {
         );
         grid.setHeightFull();
 
-        // Стилизация колонок
         grid.addColumn(Order::getId)
                 .setHeader("Номер заказа")
                 .setSortable(true)

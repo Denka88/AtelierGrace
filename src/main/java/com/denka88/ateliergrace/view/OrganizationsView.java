@@ -48,7 +48,6 @@ public class OrganizationsView extends VerticalLayout {
         this.currentUserService = currentUserService;
         this.grid = new Grid<>(Organization.class, false);
 
-        // Общие стили для страницы
         setPadding(true);
         setSpacing(false);
         setSizeFull();
@@ -57,12 +56,10 @@ public class OrganizationsView extends VerticalLayout {
         setupGrid();
         updateGrid();
 
-        // Стилизация кнопки добавления
         Button addButton = new Button("Добавить поставщика", VaadinIcon.PLUS.create());
         addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         addButton.addClassName(LumoUtility.Margin.Bottom.LARGE);
 
-        // Стилизация popover для добавления
         Popover addOrganization = new Popover();
         addOrganization.setModal(true);
         addOrganization.setBackdropVisible(true);
@@ -109,7 +106,6 @@ public class OrganizationsView extends VerticalLayout {
         editAddress.setMinLength(5);
         editAddress.setRequired(true);
 
-        // Стилизация формы редактирования
         editForm.setWidth("400px");
         editForm.addClassNames(
                 LumoUtility.Padding.LARGE,
@@ -118,7 +114,6 @@ public class OrganizationsView extends VerticalLayout {
                 LumoUtility.Background.BASE
         );
 
-        // Стилизация кнопки сохранения
         editButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         editButton.addClassName(LumoUtility.Margin.Top.MEDIUM);
         editButton.getStyle().set("margin-left", "auto");
@@ -157,19 +152,16 @@ public class OrganizationsView extends VerticalLayout {
             editAddress.setValue(e.getItem().map(Organization::getAddress).orElse("Не доступно"));
         });
 
-        // Стилизация полей формы
         styleTextField(editName);
         styleTextField(editAddress);
 
         editForm.add(id, editName, editAddress, editButton);
         editForm.setVisible(false);
 
-        // Контейнер для кнопки добавления
         HorizontalLayout buttonLayout = new HorizontalLayout(addButton);
         buttonLayout.setWidthFull();
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
-        // Контейнер для сетки и формы
         Div content = new Div(grid, editForm);
         content.addClassName(LumoUtility.Display.FLEX);
         content.addClassName(LumoUtility.FlexDirection.COLUMN);
@@ -188,7 +180,6 @@ public class OrganizationsView extends VerticalLayout {
         );
         grid.setHeightFull();
 
-        // Стилизация колонок
         grid.addColumn(Organization::getId)
                 .setHeader("ID")
                 .setSortable(true)
@@ -205,7 +196,6 @@ public class OrganizationsView extends VerticalLayout {
                 .setSortable(true)
                 .setAutoWidth(true);
 
-        // Стилизация контекстного меню
         GridContextMenu<Organization> contextMenu = grid.addContextMenu();
 
         Button editMenuItem = new Button("Изменить", VaadinIcon.EDIT.create());

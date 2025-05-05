@@ -46,7 +46,6 @@ public class OrganizationMaterialView extends VerticalLayout {
         this.materialService = materialService;
         this.grid = new Grid<>(OrganizationMaterial.class, false);
 
-        // Общие стили для страницы
         setPadding(true);
         setSpacing(false);
         setSizeFull();
@@ -131,14 +130,12 @@ public class OrganizationMaterialView extends VerticalLayout {
         addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         addButton.addClassName(LumoUtility.Margin.Bottom.LARGE);
 
-        // Стилизация popover для добавления
         Popover addSupplied = new Popover();
         addSupplied.setModal(true);
         addSupplied.setBackdropVisible(true);
         addSupplied.setWidth("300px");
         addSupplied.addClassName(LumoUtility.Padding.LARGE);
 
-        // Форма добавления поставки
         FormLayout formLayout = new FormLayout();
         formLayout.setWidth("400px");
 
@@ -213,12 +210,10 @@ public class OrganizationMaterialView extends VerticalLayout {
         addSupplied.add(formLayout);
         addSupplied.setTarget(addButton);
 
-        // Контейнер для кнопки добавления
         HorizontalLayout buttonLayout = new HorizontalLayout(addButton);
         buttonLayout.setWidthFull();
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
-        // Контейнер для сетки
         Div content = new Div(grid);
         content.setSizeFull();
 
