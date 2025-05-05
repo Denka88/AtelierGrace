@@ -6,6 +6,8 @@ import com.denka88.ateliergrace.service.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
+import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
@@ -169,16 +171,35 @@ public class OrdersView extends VerticalLayout {
         clientDetails.setWidthFull();
         clientDetails.setReadOnly(true);
         clientDetails.setVisible(false);
-        
+
+
+        ContextMenu closeDetailsOrder = new ContextMenu(detailsText);
+        MenuItem closeOrder = closeDetailsOrder.addItem("Закрыть");
+        closeOrder.setDisableOnClick(true);
+        closeOrder.addClickListener(e->{
+           detailsText.setVisible(false);
+           closeOrder.setEnabled(true);
+        });
+        ContextMenu closeDetailsClient = new ContextMenu(clientDetails);
+        MenuItem closeClient = closeDetailsClient.addItem("Закрыть");
+        closeClient.setDisableOnClick(true);
+        closeClient.addClickListener(e->{
+            clientDetails.setVisible(false);
+           closeClient.setEnabled(true);
+        });
+
         setupGrid();
         updateGrid();
 
-        editForm.setWidth("400px");
+        editForm.setWidth("600px");
         editForm.addClassNames(
                 LumoUtility.Padding.LARGE,
                 LumoUtility.BorderRadius.LARGE,
                 LumoUtility.BoxShadow.SMALL,
                 LumoUtility.Background.BASE
+        );
+        editForm.setResponsiveSteps(
+                new FormLayout.ResponsiveStep("0", 1)
         );
 
         id.setVisible(false);
