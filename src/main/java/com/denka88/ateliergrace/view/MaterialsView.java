@@ -12,6 +12,8 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -151,7 +153,16 @@ public class MaterialsView extends VerticalLayout {
         styleTextField(editName);
         styleIntegerField(editValue);
 
-        editForm.add(id, editName, editValue, editButton);
+        Button close = new Button(new Icon("lumo", "cross"), (e) -> editForm.setVisible(false));
+
+        HorizontalLayout formHeader = new HorizontalLayout();
+        formHeader.getStyle().set("justify-content", "space-between");
+
+        H3 title = new H3("Изменить материал");
+
+        formHeader.add(title, close);
+
+        editForm.add(formHeader, id, editName, editValue, editButton);
         editForm.setVisible(false);
 
         HorizontalLayout buttonLayout = new HorizontalLayout(addButton);

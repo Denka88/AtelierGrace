@@ -11,9 +11,12 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
@@ -98,7 +101,16 @@ public class ClientsView extends VerticalLayout {
         styleTextField(editName);
         styleTextField(editPatronymic);
 
-        editForm.add(id, editSurname, editName, editPatronymic, editButton);
+        Button close = new Button(new Icon("lumo", "cross"), (e) -> editForm.setVisible(false));
+
+        HorizontalLayout formHeader = new HorizontalLayout();
+        formHeader.getStyle().set("justify-content", "space-between");
+
+        H3 title = new H3("Изменить клиента");
+
+        formHeader.add(title, close);
+
+        editForm.add(formHeader, id, editSurname, editName, editPatronymic, editButton);
         editForm.setVisible(false);
 
         Div content = new Div(grid, editForm);

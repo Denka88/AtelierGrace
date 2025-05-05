@@ -1,10 +1,9 @@
 package com.denka88.ateliergrace;
 
-import com.denka88.ateliergrace.model.UserType;
 import com.denka88.ateliergrace.service.CurrentUserService;
-import com.denka88.ateliergrace.view.*;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.H1;
@@ -13,8 +12,10 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.Scroller;
+import com.vaadin.flow.component.sidenav.SideNav;
+import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.Layout;
-import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.spring.security.AuthenticationContext;
 import com.vaadin.flow.theme.lumo.LumoUtility;
@@ -22,12 +23,14 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 @Layout
 @AnonymousAllowed
 public class MainLayout extends AppLayout {
-    
+
     private final CurrentUserService currentUserService;
 
     public MainLayout(AuthenticationContext authenticationContext, CurrentUserService currentUserService) {
         this.currentUserService = currentUserService;
-        
+
+        DrawerToggle toggle = new DrawerToggle();
+
         H1 title = new H1("Грация");
         title.getStyle()
                 .set("font-size", "var(--lumo-font-size-xxl)")
@@ -41,7 +44,9 @@ public class MainLayout extends AppLayout {
         title.addClickListener(e -> title.getStyle().set("color", "var(--lumo-primary-color-50pct)"));
         title.addClickListener(e -> title.getStyle().set("color", "var(--lumo-primary-text-color)"));
 
-        HorizontalLayout navigation = getNavigation(authenticationContext);
+        HorizontalLayout navbarRight = new HorizontalLayout();
+        navbarRight.setAlignItems(FlexComponent.Alignment.CENTER);
+        navbarRight.getStyle().set("margin-left", "auto").set("margin-right", "5px");
 
         HorizontalLayout userControls = new HorizontalLayout();
         userControls.setSpacing(false);
@@ -57,13 +62,13 @@ public class MainLayout extends AppLayout {
             username.setText(auth.getLogin());
         });
 
-        Icon userIcon = VaadinIcon.USER.create();
+        Icon userIcon = VaadinIcon.PIGGY_BANK.create();
         userIcon.getStyle()
                 .set("width", "var(--lumo-icon-size-s)")
                 .set("height", "var(--lumo-icon-size-s)")
                 .set("color", "var(--lumo-contrast-60pct)");
 
-        Button logout = new Button("Выйти", VaadinIcon.SIGN_OUT.create(),
+        Button logout = new Button("Выйти", VaadinIcon.GOLF.create(),
                 e -> authenticationContext.logout());
         logout.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
         logout.getStyle()
@@ -72,109 +77,43 @@ public class MainLayout extends AppLayout {
                 .set("padding", "0");
 
         userControls.add(userIcon, username, logout);
+        navbarRight.add(userControls);
+        SideNav nav = getSideNav(authenticationContext);
+        Scroller scroller = new Scroller(nav);
+        scroller.setClassName(LumoUtility.Padding.SMALL);
 
-        HorizontalLayout navbarLayout = new HorizontalLayout(title, navigation, userControls);
-        navbarLayout.setWidthFull();
-        navbarLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-        navbarLayout.setAlignItems(FlexComponent.Alignment.CENTER);
-        navbarLayout.setPadding(true);
-        navbarLayout.setSpacing(false);
-        navbarLayout.addClassName(LumoUtility.BoxShadow.SMALL);
-        navbarLayout.getStyle()
-                .set("background", "var(--lumo-base-color)")
-                .set("border-bottom", "1px solid var(--lumo-contrast-10pct)");
+        addToDrawer(scroller);
 
-        addToNavbar(navbarLayout);
+        addToNavbar(toggle, title, navbarRight);
     }
 
-    private HorizontalLayout getNavigation(AuthenticationContext authenticationContext) {
-        HorizontalLayout navigation = new HorizontalLayout();
-        navigation.addClassNames(
-                LumoUtility.Gap.MEDIUM,
-                LumoUtility.Height.MEDIUM,
-                LumoUtility.AlignItems.CENTER
-        );
-
-        if (authenticationContext.hasRole("ADMIN")){
-            navigation.add(
-                    styledLink("Заказы"), styledLink("Клиенты"),
-                    styledLink("Поставщики"), styledLink("Материалы"),
-                    styledLink("Сотрудники"), styledLink("Поставки")
-            );
-        } else if (authenticationContext.hasRole("CLIENT")) {
-            navigation.add(
-                    styledLink("Мои заказы"), styledLink("Создать заказ")
+    private SideNav getSideNav(AuthenticationContext authenticationContext) {
+        SideNav sideNav = new SideNav();
+        if (authenticationContext.hasRole("ADMIN")) {
+            sideNav.addItem(
+                    new SideNavItem("Заказы", "/orders-list",VaadinIcon.PAPERCLIP.create()),
+                    new SideNavItem("Клиенты", "/clients-list", VaadinIcon.USER.create()),
+                    new SideNavItem("Поставщики", "/organizations-list", VaadinIcon.OFFICE.create()),
+                    new SideNavItem("Материалы", "/materials-list", VaadinIcon.CUBE.create()),
+                    new SideNavItem("Сотрудники", "/employees-list", VaadinIcon.ACCESSIBILITY.create()),
+                    new SideNavItem("Поставки", "/supplies", VaadinIcon.TRUCK.create())
             );
         }
-        else {
-            navigation.add(
-                    styledLink("Заказы"), styledLink("Поставщики"),
-                    styledLink("Поставки"), styledLink("Материалы")
+        else if (authenticationContext.hasRole("CLIENT")) {
+            sideNav.addItem(
+                    new SideNavItem("Мои заказы", "/my-orders", VaadinIcon.PAPERCLIP.create()),
+                    new SideNavItem("Создать заказ", "/add-order", VaadinIcon.PLUS.create())
             );
         }
+        else{
+            sideNav.addItem(
+                    new SideNavItem("Заказы", "/orders-list",VaadinIcon.PAPERCLIP.create()),
+                    new SideNavItem("Поставщики", "/organizations-list", VaadinIcon.OFFICE.create()),
+                    new SideNavItem("Материалы", "/materials-list", VaadinIcon.CUBE.create()),
+                    new SideNavItem("Поставки", "/supplies", VaadinIcon.TRUCK.create())
 
-        return navigation;
-    }
-
-    private RouterLink styledLink(String viewName) {
-        RouterLink link = createLink(viewName);
-        link.addClassNames(
-                LumoUtility.Padding.Vertical.SMALL,
-                LumoUtility.Padding.Horizontal.MEDIUM,
-                LumoUtility.BorderRadius.MEDIUM
-        );
-        link.getStyle()
-                .set("transition", "background-color 0.2s, color 0.2s")
-                .set("font-weight", "500");
-
-        link.getElement().addEventListener("mouseenter", e -> {
-            link.getStyle().set("color", "var(--lumo-primary-color)");
-        });
-
-        link.getElement().addEventListener("mouseleave", e -> {
-            link.getStyle().set("color", "var(--lumo-body-text-color)");
-        });
-
-        return link;
-    }
-
-    private RouterLink createLink(String viewName) {
-        RouterLink link = new RouterLink();
-        link.add(viewName);
-        switch (viewName){
-            case "Заказы":
-                link.setRoute(OrdersView.class);
-                break;
-            case "Клиенты":
-                link.setRoute(ClientsView.class);
-                break;
-            case "Поставщики":
-                link.setRoute(OrganizationsView.class);
-                break;
-            case "Материалы":
-                link.setRoute(MaterialsView.class);
-                break;
-            case "Сотрудники":
-                link.setRoute(EmployeesView.class);
-                break;
-            case "Поставки":
-                link.setRoute(OrganizationMaterialView.class);
-                break;
-            case "Мои заказы":
-                link.setRoute(MyOrdersView.class);
-                break;
-            case "Создать заказ":
-                link.setRoute(AddOrderView.class);
-                break;
-            default:
-                link.setRoute(MainView.class);
+            );
         }
-        link.addClassNames(LumoUtility.Display.FLEX,
-                LumoUtility.AlignItems.CENTER,
-                LumoUtility.TextColor.BODY,
-                LumoUtility.FontWeight.MEDIUM);
-        link.getStyle().set("text-decoration", "none");
-
-        return link;
+        return sideNav;
     }
 }

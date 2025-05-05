@@ -10,6 +10,8 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -171,7 +173,7 @@ public class OrdersView extends VerticalLayout {
         setupGrid();
         updateGrid();
 
-        editForm.setWidth("600px");
+        editForm.setWidth("400px");
         editForm.addClassNames(
                 LumoUtility.Padding.LARGE,
                 LumoUtility.BorderRadius.LARGE,
@@ -257,7 +259,16 @@ public class OrdersView extends VerticalLayout {
         styleTextField(editOrderName);
         styleTextField(editType);
 
-        editForm.add(id, editOrderName, editType, editMaterials, editButton);
+        Button close = new Button(new Icon("lumo", "cross"), (e) -> editForm.setVisible(false));
+
+        HorizontalLayout formHeader = new HorizontalLayout();
+        formHeader.getStyle().set("justify-content", "space-between");
+
+        H3 title = new H3("Изменить заказ");
+
+        formHeader.add(title, close);
+
+        editForm.add(formHeader, id, editOrderName, editType, editMaterials, editButton);
         editForm.setVisible(false);
         
         HorizontalLayout formAndDetails = new HorizontalLayout(editForm, detailsText, clientDetails);
