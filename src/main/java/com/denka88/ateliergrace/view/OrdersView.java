@@ -193,7 +193,7 @@ public class OrdersView extends VerticalLayout {
         closeClient.setDisableOnClick(true);
         closeClient.addClickListener(e->{
             clientDetails.setVisible(false);
-           closeClient.setEnabled(true);
+            closeClient.setEnabled(true);
         });
 
         setupGrid();

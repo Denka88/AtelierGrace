@@ -101,7 +101,8 @@ public class MainLayout extends AppLayout {
         }
         else if (authenticationContext.hasRole("CLIENT")) {
             sideNav.addItem(
-                    new SideNavItem("Мои заказы", "/my-orders", VaadinIcon.PAPERCLIP.create())
+                    new SideNavItem("Мои заказы", "/my-orders", VaadinIcon.PAPERCLIP.create()),
+                    new SideNavItem("Мой профиль", "/client-profile", VaadinIcon.USER_CARD.create())
             );
         }
         else{
