@@ -441,11 +441,6 @@ public class OrdersView extends VerticalLayout {
                 actions.setPadding(false);
                 actions.setWidthFull();
 
-                Button takeOrderBtn = new Button("Взять заказ", VaadinIcon.HANDS_UP.create());
-                takeOrderBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-                takeOrderBtn.setWidthFull();
-                takeOrderBtn.setEnabled(order.getStatus().equals(Status.PROGRESS));
-
                 Popover setCost = new Popover();
                 setCost.setWidth("300px");
                 setCost.addClassName(LumoUtility.Padding.LARGE);
@@ -455,40 +450,11 @@ public class OrdersView extends VerticalLayout {
                 NumberField cost = new NumberField("Стоимость заказа");
                 cost.setWidthFull();
                 cost.setMin(0);
-
-                Button confirm = new Button("Подтвердить", VaadinIcon.CHECK.create());
-                confirm.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-                confirm.setWidthFull();
-
-                FormLayout popoverForm = new FormLayout(cost, confirm);
-                popoverForm.setWidthFull();
-                setCost.add(popoverForm);
-                setCost.setTarget(takeOrderBtn);
-
-                confirm.addClickListener(e -> {
-                    if (cost.isEmpty()) {
-                        Notification.show("Укажите стоимость")
-                                .setPosition(Notification.Position.TOP_END);
-                        return;
-                    }
-                    order.setCost(cost.getValue().floatValue());
-                    orderService.takeOrder(order);
-                    updateGrid();
-                    setCost.setVisible(false);
-                    Notification.show("Вы взяли заказ #" + order.getId())
-                            .setPosition(Notification.Position.TOP_END);
-                });
-
-                boolean alreadyTaken = order.getOrderEmployees().stream()
-                        .anyMatch(oe -> oe.getEmployee().getId().equals(currentUserService.getCurrentUserId()));
-                takeOrderBtn.setVisible(!alreadyTaken);
-
-                // Кнопка "Завершить"
+                
                 Button completeBtn = new Button("Завершить", VaadinIcon.CHECK_CIRCLE.create());
                 completeBtn.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
                 completeBtn.setWidthFull();
-                completeBtn.setVisible(alreadyTaken);
-                completeBtn.setEnabled(alreadyTaken && order.getStatus() != Status.COMPLETED);
+                completeBtn.setEnabled(order.getStatus() != Status.COMPLETED);
                 completeBtn.addClickListener(e -> {
                     orderService.completeOrder(order.getId());
                     updateGrid();
@@ -496,7 +462,7 @@ public class OrdersView extends VerticalLayout {
                             .setPosition(Notification.Position.TOP_END);
                 });
 
-                actions.add(takeOrderBtn, completeBtn);
+                actions.add(completeBtn);
                 return actions;
             })).setHeader("Действия").setAutoWidth(true).setFlexGrow(0);
         }
