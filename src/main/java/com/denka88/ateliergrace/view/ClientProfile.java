@@ -111,8 +111,6 @@ public class ClientProfile extends VerticalLayout {
             editProfile.setVisible(false);
             confirm.setVisible(true);
             reset.setVisible(true);
-            
-            
         });
 
         HorizontalLayout buttons = new HorizontalLayout(editProfile, confirm, reset);

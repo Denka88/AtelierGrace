@@ -14,6 +14,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -92,6 +93,10 @@ public class AddOrderView extends VerticalLayout {
         );
         employees.setWidthFull();
         employees.setPlaceholder("Выберите сотрудников");
+
+        NumberField cost = new NumberField("Цена");
+        cost.setMin(0);
+        cost.setPlaceholder("Введите цену");
         
         Button create = new Button("Создать заказ", VaadinIcon.CHECK.create());
         create.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -107,6 +112,7 @@ public class AddOrderView extends VerticalLayout {
             order.setOrderName(orderName.getValue());
             order.setType(type.getValue());
             order.setClient(clients.getValue());
+            order.setCost(cost.getValue().floatValue());
             
 
             Set<Material> materialSet = new HashSet<>(materials.getValue());
@@ -141,7 +147,7 @@ public class AddOrderView extends VerticalLayout {
             }
         });
 
-        form.add(orderName, type, materials, clients, employees, create);
+        form.add(orderName, type, materials, clients, employees, cost, create);
         form.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1)
         );
