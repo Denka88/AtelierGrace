@@ -18,5 +18,8 @@ public interface EmployeeService {
     void update(Employee employee);
 
     boolean hasOrder(Employee employee);
+
+    List<Employee> findAllOrderByInProgressOrdersCount();
+    
     
 }

@@ -62,7 +62,7 @@ public class MainLayout extends AppLayout {
             username.setText(auth.getLogin());
         });
 
-        Icon userIcon = VaadinIcon.PIGGY_BANK.create();
+        Icon userIcon = VaadinIcon.PIGGY_BANK_COIN.create();
         userIcon.getStyle()
                 .set("width", "var(--lumo-icon-size-s)")
                 .set("height", "var(--lumo-icon-size-s)")
@@ -101,8 +101,7 @@ public class MainLayout extends AppLayout {
         }
         else if (authenticationContext.hasRole("CLIENT")) {
             sideNav.addItem(
-                    new SideNavItem("Мои заказы", "/my-orders", VaadinIcon.PAPERCLIP.create()),
-                    new SideNavItem("Создать заказ", "/add-order", VaadinIcon.PLUS.create())
+                    new SideNavItem("Мои заказы", "/my-orders", VaadinIcon.PAPERCLIP.create())
             );
         }
         else{
@@ -111,7 +110,6 @@ public class MainLayout extends AppLayout {
                     new SideNavItem("Поставщики", "/organizations-list", VaadinIcon.OFFICE.create()),
                     new SideNavItem("Материалы", "/materials-list", VaadinIcon.CUBE.create()),
                     new SideNavItem("Поставки", "/supplies", VaadinIcon.TRUCK.create())
-
             );
         }
         return sideNav;

@@ -3,6 +3,7 @@ package com.denka88.ateliergrace.view;
 import com.denka88.ateliergrace.MainLayout;
 import com.denka88.ateliergrace.model.*;
 import com.denka88.ateliergrace.service.*;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
@@ -158,7 +159,14 @@ public class OrdersView extends VerticalLayout {
             filterPopover.close();
         });
 
-        HorizontalLayout toolbar = new HorizontalLayout(filterButton);
+        Button addOrder = new Button("Создать заказ", VaadinIcon.PLUS.create());
+        addOrder.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        addOrder.addClassName(LumoUtility.Margin.Bottom.LARGE);
+        addOrder.addClickListener(e->{
+            UI.getCurrent().navigate("/add-order");
+        });
+        
+        HorizontalLayout toolbar = new HorizontalLayout(filterButton, addOrder);
         toolbar.setWidthFull();
         toolbar.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
@@ -291,6 +299,7 @@ public class OrdersView extends VerticalLayout {
 
         editForm.add(formHeader, id, editOrderName, editType, editMaterials, editButton);
         editForm.setVisible(false);
+        
         
         HorizontalLayout formAndDetails = new HorizontalLayout(editForm, detailsText, clientDetails);
         formAndDetails.setWidthFull();

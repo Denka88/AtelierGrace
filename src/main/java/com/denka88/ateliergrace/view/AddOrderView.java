@@ -20,6 +20,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.RolesAllowed;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,13 +33,17 @@ public class AddOrderView extends VerticalLayout {
     private final MaterialService materialService;
     private final CurrentUserService currentUserService;
     private final ClientService clientService;
+    private final EmployeeService employeeService;
+    private final OrderEmployeeService orderEmployeeService;
 
     public AddOrderView(OrderService orderService, MaterialService materialService,
-                        CurrentUserService currentUserService, ClientService clientService) {
+                        CurrentUserService currentUserService, ClientService clientService, EmployeeService employeeService, OrderEmployeeService orderEmployeeService) {
         this.orderService = orderService;
         this.materialService = materialService;
         this.currentUserService = currentUserService;
         this.clientService = clientService;
+        this.employeeService = employeeService;
+        this.orderEmployeeService = orderEmployeeService;
 
         setPadding(true);
         setSpacing(false);
@@ -76,7 +81,18 @@ public class AddOrderView extends VerticalLayout {
         clients.setItemLabelGenerator(Client::getName);
         clients.setWidthFull();
         clients.setPlaceholder("Выберите клиента");
-
+        
+        MultiSelectComboBox<Employee> employees = new MultiSelectComboBox<>("Ответственные сотрудники");
+        employees.setItems(employeeService.findAllOrderByInProgressOrdersCount());
+        employees.setItemLabelGenerator(e ->
+                String.format("%s %s (активных: %d)",
+                        e.getSurname(),
+                        e.getName(),
+                        orderEmployeeService.getInProgressCount(e.getId()))
+        );
+        employees.setWidthFull();
+        employees.setPlaceholder("Выберите сотрудников");
+        
         Button create = new Button("Создать заказ", VaadinIcon.CHECK.create());
         create.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         create.setWidthFull();
@@ -91,18 +107,32 @@ public class AddOrderView extends VerticalLayout {
             order.setOrderName(orderName.getValue());
             order.setType(type.getValue());
             order.setClient(clients.getValue());
+            
 
             Set<Material> materialSet = new HashSet<>(materials.getValue());
             order.setMaterials(materialSet);
 
             try {
                 Order savedOrder = orderService.save(order);
+
+                if (!employees.getValue().isEmpty()) {
+                    employees.getValue().forEach(employee -> {
+                        orderEmployeeService.createAssignment(
+                                savedOrder.getId(),
+                                employee.getId(),
+                                LocalDate.now().plusDays(14)
+                        );
+                    });
+                }
+                
                 Notification.show(String.format(
                                         "Заказ #%d '%s' успешно создан!",
                                         savedOrder.getId(), savedOrder.getOrderName()),
                                 5000, Notification.Position.TOP_CENTER)
                         .addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
+                
+                
                 UI.getCurrent().navigate("orders-list");
             } catch (Exception ex) {
                 Notification.show("Ошибка при создании заказа: " + ex.getMessage(),
@@ -111,7 +141,7 @@ public class AddOrderView extends VerticalLayout {
             }
         });
 
-        form.add(orderName, type, materials, clients, create);
+        form.add(orderName, type, materials, clients, employees, create);
         form.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1)
         );
