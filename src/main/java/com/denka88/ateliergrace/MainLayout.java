@@ -109,7 +109,8 @@ public class MainLayout extends AppLayout {
                     new SideNavItem("Заказы", "/orders-list",VaadinIcon.PAPERCLIP.create()),
                     new SideNavItem("Поставщики", "/organizations-list", VaadinIcon.OFFICE.create()),
                     new SideNavItem("Материалы", "/materials-list", VaadinIcon.CUBE.create()),
-                    new SideNavItem("Поставки", "/supplies", VaadinIcon.TRUCK.create())
+                    new SideNavItem("Поставки", "/supplies", VaadinIcon.TRUCK.create()),
+                    new SideNavItem("Клиенты", "/clients-list", VaadinIcon.USER.create())
             );
         }
         return sideNav;

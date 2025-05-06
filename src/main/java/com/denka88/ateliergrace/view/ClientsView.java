@@ -5,6 +5,7 @@ import com.denka88.ateliergrace.model.Client;
 import com.denka88.ateliergrace.model.UserType;
 import com.denka88.ateliergrace.service.ClientService;
 import com.denka88.ateliergrace.service.CurrentUserService;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -55,6 +56,13 @@ public class ClientsView extends VerticalLayout {
 
         setupGrid();
         updateGrid();
+        
+        Button addClient = new Button("Добавить клиента", VaadinIcon.PLUS.create());
+        addClient.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        addClient.addClassName(LumoUtility.Margin.Bottom.LARGE);
+        addClient.addClickListener(e->{
+            UI.getCurrent().navigate("/add-client");
+        });
 
         editForm.setWidth("400px");
         editForm.addClassNames(
@@ -113,13 +121,17 @@ public class ClientsView extends VerticalLayout {
         editForm.add(formHeader, id, editSurname, editName, editPatronymic, editButton);
         editForm.setVisible(false);
 
+        HorizontalLayout buttonLayout = new HorizontalLayout(addClient);
+        buttonLayout.setWidthFull();
+        buttonLayout.setJustifyContentMode(JustifyContentMode.END);
+        
         Div content = new Div(grid, editForm);
         content.addClassName(LumoUtility.Display.FLEX);
         content.addClassName(LumoUtility.FlexDirection.COLUMN);
         content.addClassName(LumoUtility.Gap.LARGE);
         content.setSizeFull();
 
-        add(content);
+        add(buttonLayout, content);
     }
 
     private void setupGrid(){
