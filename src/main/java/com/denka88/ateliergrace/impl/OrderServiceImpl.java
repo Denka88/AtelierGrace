@@ -42,11 +42,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public Order save(Order order) {
-
-        Client currentClient = currentUserService.getCurrentClient()
-                .orElseThrow(() -> new IllegalStateException("Клиент не найден"));
-        
-        order.setClient(currentClient);
         order.setOrderDate(LocalDate.now());
         order.setStatus(Status.PROGRESS);
         
