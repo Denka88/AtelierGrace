@@ -58,12 +58,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void update(Employee employee) {
         employeeRepo.save(employee);
     }
-
-    @Override
-    public boolean hasOrder(Employee employee) {
-        return employee.getOrders() != null;
-    }
-
+    
     @Override
     public List<Employee> findAllOrderByInProgressOrdersCount() {
         Map<Long, Long> employeeOrderCounts = orderEmployeeRepo.countInProgressOrdersPerEmployee().stream().collect(Collectors.toMap(arr->(Long) arr[0], arr->(Long) arr[1]));

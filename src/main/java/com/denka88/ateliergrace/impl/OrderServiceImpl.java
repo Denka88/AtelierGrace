@@ -68,34 +68,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void takeOrder(Order order) {
-        Employee currentEmployee = currentUserService.getCurrentEmployee()
-                        .orElseThrow(() -> new IllegalArgumentException("Сотрудник не найден"));
-        
-        boolean alreadyTaken = order.getOrderEmployees().stream()
-                .anyMatch(oe -> oe.getEmployee().getId().equals(currentEmployee.getId()));
-
-        if (!alreadyTaken) {
-            OrderEmployee orderEmployee = new OrderEmployee();
-            
-            orderEmployee.setOrder(order);
-            orderEmployee.setEmployee(currentEmployee);
-
-            orderEmployee.setDateOfReady(LocalDate.now().plusDays(14));
-            OrderEmployeeKey key = new OrderEmployeeKey();
-            key.setOrderId(order.getId());
-            key.setEmployeeId(currentEmployee.getId());
-            orderEmployee.setId(key);
-            
-            orderEmployeeService.save(orderEmployee);
-
-            order.getOrderEmployees().add(orderEmployee);
-            orderRepo.save(order);
-        }
-    }
-
-    @Override
-    @Transactional
     public void completeOrder(Long orderId) {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Заказ не найден"));
