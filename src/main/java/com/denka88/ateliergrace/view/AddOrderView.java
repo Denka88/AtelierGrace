@@ -64,10 +64,10 @@ public class AddOrderView extends VerticalLayout {
         orderName.setRequired(true);
         orderName.setPlaceholder("Введите название заказа");
 
-        TextField type = new TextField("Тип заказа");
-        type.setWidthFull();
-        type.setRequired(true);
-        type.setPlaceholder("Укажите тип заказа");
+        TextField description = new TextField("Описание заказа");
+        description.setWidthFull();
+        description.setRequired(true);
+        description.setPlaceholder("Укажите Описание заказа");
 
         MultiSelectComboBox<Material> materials = new MultiSelectComboBox<>("Материалы");
         materials.setItems(materialService.findAll());
@@ -103,14 +103,14 @@ public class AddOrderView extends VerticalLayout {
         create.setWidthFull();
 
         create.addClickListener(e -> {
-            if (orderName.isEmpty() || type.isEmpty() || materials.isEmpty() || clients.isEmpty()) {
+            if (orderName.isEmpty() || description.isEmpty() || materials.isEmpty() || clients.isEmpty()) {
                 showError("Заполните все поля");
                 return;
             }
 
             Order order = new Order();
             order.setOrderName(orderName.getValue());
-            order.setType(type.getValue());
+            order.setDescription(description.getValue());
             order.setClient(clients.getValue());
             order.setCost(cost.getValue().floatValue());
             
@@ -147,7 +147,7 @@ public class AddOrderView extends VerticalLayout {
             }
         });
 
-        form.add(orderName, type, materials, clients, employees, cost, create);
+        form.add(orderName, description, materials, clients, employees, cost, create);
         form.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1)
         );

@@ -241,7 +241,7 @@ public class OrdersView extends VerticalLayout {
             Order updateOrder = orderService.findById(Long.valueOf(id.getValue())).orElse(null);
             if (updateOrder != null) {
                 updateOrder.setOrderName(editOrderName.getValue());
-                updateOrder.setType(editType.getValue());
+                updateOrder.setDescription(editType.getValue());
                 updateOrder.setMaterials(new HashSet<>(editMaterials.getSelectedItems()));
                 orderService.update(updateOrder);
                 updateGrid();
@@ -254,7 +254,7 @@ public class OrdersView extends VerticalLayout {
         grid.addCellFocusListener(e -> {
             id.setValue(String.valueOf(e.getItem().map(Order::getId).orElse(null)));
             editOrderName.setValue(e.getItem().map(Order::getOrderName).orElse("Не доступно"));
-            editType.setValue(e.getItem().map(Order::getType).orElse("Не доступно"));
+            editType.setValue(e.getItem().map(Order::getDescription).orElse("Не доступно"));
             editMaterials.clear();
             if (e.getItem().isPresent()) {
                 editMaterials.select(e.getItem().get().getMaterials());
@@ -263,7 +263,7 @@ public class OrdersView extends VerticalLayout {
             String detailsId = String.valueOf(e.getItem().map(Order::getId).orElse(null));
             String detailsClient = String.valueOf(e.getItem().map(Order::getClient).orElse(null));
             String detailsOrderName = String.valueOf(e.getItem().map(Order::getOrderName).orElse(null));
-            String detailsType = String.valueOf(e.getItem().map(Order::getType).orElse(null));
+            String detailsDescription = String.valueOf(e.getItem().map(Order::getDescription).orElse(null));
             String detailsOrderDate = String.valueOf(e.getItem().map(Order::getOrderDate).orElse(null));
             String detailsCost = String.valueOf(e.getItem().map(Order::getCost).orElse(null));
             String detailsStatus = String.valueOf(e.getItem().map(Order::getStatus).orElse(null));
@@ -279,7 +279,7 @@ public class OrdersView extends VerticalLayout {
             String clientDetailsContainer = String.format("ID: %s%nФамилия: %s%nИмя: %s%nОтчество: %s%nНомер телефона: %s%n", 
                     id, surname, name, patronymic, phone);
             String areaContainer = String.format("ID: %s%nЗаказчик: %s%nНазвание заказа: %s%nТип заказа: %s%nДата создания: %s%n" +
-                    "Цена: %s%nСтатус заказа: %s%nСотрудники: %s%nМатериалы: %s%n", detailsId, detailsClient, detailsOrderName, detailsType, detailsOrderDate, detailsCost, detailsStatus, detailsEmployees, detailsMaterials);
+                    "Цена: %s%nСтатус заказа: %s%nСотрудники: %s%nМатериалы: %s%n", detailsId, detailsClient, detailsOrderName, detailsDescription, detailsOrderDate, detailsCost, detailsStatus, detailsEmployees, detailsMaterials);
             
             clientDetails.setValue(clientDetailsContainer);
             detailsText.setValue(areaContainer);
@@ -339,8 +339,8 @@ public class OrdersView extends VerticalLayout {
                 .setSortable(true)
                 .setAutoWidth(true);
 
-        grid.addColumn(Order::getType)
-                .setHeader("Тип заказа")
+        grid.addColumn(Order::getDescription)
+                .setHeader("Описание заказа")
                 .setSortable(true)
                 .setAutoWidth(true);
 
@@ -415,7 +415,7 @@ public class OrdersView extends VerticalLayout {
                 editForm.setVisible(true);
                 id.setValue(String.valueOf(e.getItem().map(Order::getId).orElse(null)));
                 editOrderName.setValue(e.getItem().map(Order::getOrderName).orElse(null));
-                editType.setValue(e.getItem().map(Order::getType).orElse(null));
+                editType.setValue(e.getItem().map(Order::getDescription).orElse(null));
                 editMaterials.clear();
                 if (e.getItem().isPresent()) {
                     editMaterials.select(e.getItem().get().getMaterials());
