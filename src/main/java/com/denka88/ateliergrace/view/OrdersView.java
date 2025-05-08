@@ -9,6 +9,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.contextmenu.MenuItem;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
@@ -422,15 +423,36 @@ public class OrdersView extends VerticalLayout {
                 }
             }
         });
-
-        if(currentUserService.getCurrentUserType() == UserType.ADMIN){
+        
+        if(currentUserService.getCurrentUserType().equals(UserType.ADMIN)){
             Button deleteMenuItem = new Button("Удалить", VaadinIcon.TRASH.create());
             deleteMenuItem.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_TERTIARY);
             contextMenu.addItem(deleteMenuItem, e->{
-                orderService.delete(e.getItem().map(Order::getId).orElse(null));
-                updateGrid();
-                Notification.show("Заказ удален")
-                        .setPosition(Notification.Position.TOP_END);
+                Dialog delete = new Dialog();
+
+                Button confirmDelete = new Button("Удалить");
+                confirmDelete.addThemeVariants(ButtonVariant.LUMO_ERROR);
+                Button cancelDelete = new Button("Отмена");
+                cancelDelete.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+                HorizontalLayout buttonLayout = new HorizontalLayout(cancelDelete, confirmDelete);
+                buttonLayout.setWidthFull();
+                buttonLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
+                delete.add(buttonLayout);
+                delete.setHeaderTitle(String.format("Удалить заказ \"%s\"", e.getItem().map(Order::getOrderName).orElse(null)));
+                delete.open();
+                
+                confirmDelete.addClickListener(event -> {
+                    orderService.delete(e.getItem().map(Order::getId).orElse(null));
+                    updateGrid();
+                    Notification.show("Заказ удален")
+                            .setPosition(Notification.Position.TOP_END);
+                    delete.close();
+                });
+                
+                cancelDelete.addClickListener(event -> {
+                    delete.close();
+                });
             });
         }
 

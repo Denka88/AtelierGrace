@@ -1,9 +1,7 @@
 package com.denka88.ateliergrace.view;
 
 import com.denka88.ateliergrace.MainLayout;
-import com.denka88.ateliergrace.model.Auth;
 import com.denka88.ateliergrace.model.Client;
-import com.denka88.ateliergrace.service.AuthService;
 import com.denka88.ateliergrace.service.ClientService;
 import com.denka88.ateliergrace.service.CurrentUserService;
 import com.vaadin.flow.component.Component;
@@ -11,19 +9,14 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.BeforeEvent;
-import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 
 import java.util.Optional;
@@ -31,7 +24,7 @@ import java.util.Optional;
 @Route(value = "client-profile", layout = MainLayout.class)
 @PageTitle("Мой профиль")
 @RolesAllowed("CLIENT")
-public class ClientProfile extends VerticalLayout {
+public class ClientProfileView extends VerticalLayout {
 
     private final CurrentUserService currentUserService;
     private final ClientService clientService;
@@ -47,7 +40,7 @@ public class ClientProfile extends VerticalLayout {
     
     
 
-    public ClientProfile(CurrentUserService currentUserService, ClientService clientService) {
+    public ClientProfileView(CurrentUserService currentUserService, ClientService clientService) {
         this.currentUserService = currentUserService;
         this.clientService = clientService;
 

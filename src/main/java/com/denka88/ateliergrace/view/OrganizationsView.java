@@ -8,6 +8,7 @@ import com.denka88.ateliergrace.service.OrganizationService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
@@ -226,10 +227,31 @@ public class OrganizationsView extends VerticalLayout {
             Button deleteMenuItem = new Button("Удалить", VaadinIcon.TRASH.create());
             deleteMenuItem.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_TERTIARY);
             contextMenu.addItem(deleteMenuItem, e -> {
-                organizationService.delete(e.getItem().map(Organization::getId).orElse(null));
-                updateGrid();
-                Notification.show("Поставщик удален")
-                        .setPosition(Notification.Position.TOP_END);
+                Dialog delete = new Dialog();
+
+                Button confirmDelete = new Button("Удалить");
+                confirmDelete.addThemeVariants(ButtonVariant.LUMO_ERROR);
+                Button cancelDelete = new Button("Отмена");
+                cancelDelete.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+                HorizontalLayout buttonLayout = new HorizontalLayout(cancelDelete, confirmDelete);
+                buttonLayout.setWidthFull();
+                buttonLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
+                delete.add(buttonLayout);
+                delete.setHeaderTitle(String.format("Удалить организацию \"%s\"", e.getItem().map(Organization::getName).orElse(null)));
+                delete.open();
+                
+                confirmDelete.addClickListener(event -> {
+                    organizationService.delete(e.getItem().map(Organization::getId).orElse(null));
+                    updateGrid();
+                    Notification.show("Поставщик удален")
+                            .setPosition(Notification.Position.TOP_END);
+                    delete.close();
+                });
+                
+                cancelDelete.addClickListener(event -> {
+                    delete.close();
+                });
             });
         }
     }

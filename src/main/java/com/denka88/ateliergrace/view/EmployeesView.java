@@ -8,6 +8,7 @@ import com.denka88.ateliergrace.service.EmployeeService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
@@ -44,6 +45,8 @@ public class EmployeesView extends VerticalLayout {
     private TextField editPatronymic = new TextField("Отчество");
     private TextField editPost = new TextField("Должность");
     private Button editButton = new Button("Сохранить", VaadinIcon.CHECK.create());
+
+    Dialog delete = new Dialog();
 
     public EmployeesView(EmployeeService employeeService, CurrentUserService currentUserService) {
         this.employeeService = employeeService;
@@ -195,8 +198,31 @@ public class EmployeesView extends VerticalLayout {
             Button deleteMenuItem = new Button("Удалить", VaadinIcon.TRASH.create());
             deleteMenuItem.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_TERTIARY);
             contextMenu.addItem(deleteMenuItem, e -> {
-                employeeService.delete(e.getItem().map(Employee::getId).orElse(null));
-                updateGrid();
+                Dialog delete = new Dialog();
+
+                Button confirmDelete = new Button("Удалить");
+                confirmDelete.addThemeVariants(ButtonVariant.LUMO_ERROR);
+                Button cancelDelete = new Button("Отмена");
+                cancelDelete.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+                HorizontalLayout buttonLayout = new HorizontalLayout(cancelDelete, confirmDelete);
+                buttonLayout.setWidthFull();
+                buttonLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
+                delete.add(buttonLayout);
+                delete.setHeaderTitle(String.format("Удалить сотрудника \"%s\"", e.getItem().map(Employee::getName).orElse(null)));
+                delete.open();
+                
+                confirmDelete.addClickListener(event -> {
+                    employeeService.delete(e.getItem().map(Employee::getId).orElse(null));
+                    updateGrid();
+                    Notification.show("Сотрудник удален")
+                            .setPosition(Notification.Position.TOP_END);
+                    delete.close();
+                });
+                
+                cancelDelete.addClickListener(event -> {
+                    delete.close();
+                });
             });
         }
     }
