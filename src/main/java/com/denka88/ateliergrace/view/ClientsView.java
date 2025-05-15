@@ -5,8 +5,10 @@ import com.denka88.ateliergrace.model.Client;
 import com.denka88.ateliergrace.model.UserType;
 import com.denka88.ateliergrace.service.ClientService;
 import com.denka88.ateliergrace.service.CurrentUserService;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
@@ -55,6 +57,13 @@ public class ClientsView extends VerticalLayout {
 
         setupGrid();
         updateGrid();
+        
+        Button addClient = new Button("Добавить клиента", VaadinIcon.PLUS.create());
+        addClient.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        addClient.addClassName(LumoUtility.Margin.Bottom.LARGE);
+        addClient.addClickListener(e->{
+            UI.getCurrent().navigate("/add-client");
+        });
 
         editForm.setWidth("400px");
         editForm.addClassNames(
@@ -113,13 +122,17 @@ public class ClientsView extends VerticalLayout {
         editForm.add(formHeader, id, editSurname, editName, editPatronymic, editButton);
         editForm.setVisible(false);
 
+        HorizontalLayout buttonLayout = new HorizontalLayout(addClient);
+        buttonLayout.setWidthFull();
+        buttonLayout.setJustifyContentMode(JustifyContentMode.END);
+        
         Div content = new Div(grid, editForm);
         content.addClassName(LumoUtility.Display.FLEX);
         content.addClassName(LumoUtility.FlexDirection.COLUMN);
         content.addClassName(LumoUtility.Gap.LARGE);
         content.setSizeFull();
 
-        add(content);
+        add(buttonLayout, content);
     }
 
     private void setupGrid(){
@@ -177,8 +190,31 @@ public class ClientsView extends VerticalLayout {
             Button deleteMenuItem = new Button("Удалить", VaadinIcon.TRASH.create());
             deleteMenuItem.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_TERTIARY);
             contextMenu.addItem(deleteMenuItem, e -> {
-                clientService.delete(e.getItem().map(Client::getId).orElse(null));
-                updateGrid();
+                Dialog delete = new Dialog();
+
+                Button confirmDelete = new Button("Удалить");
+                confirmDelete.addThemeVariants(ButtonVariant.LUMO_ERROR);
+                Button cancelDelete = new Button("Отмена");
+                cancelDelete.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+                HorizontalLayout buttonLayout = new HorizontalLayout(cancelDelete, confirmDelete);
+                buttonLayout.setWidthFull();
+                buttonLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
+                delete.add(buttonLayout);
+                delete.setHeaderTitle(String.format("Удалить клиента \"%s\"", e.getItem().map(Client::getName).orElse(null)));
+                delete.open();
+                
+                confirmDelete.addClickListener(event -> {
+                    clientService.delete(e.getItem().map(Client::getId).orElse(null));
+                    updateGrid();
+                    Notification.show("Клиент удален")
+                            .setPosition(Notification.Position.TOP_END);
+                    delete.close();
+                });
+                
+                cancelDelete.addClickListener(event -> {
+                    delete.close();
+                });
             });
         }
     }

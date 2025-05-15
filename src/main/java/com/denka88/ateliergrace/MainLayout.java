@@ -62,13 +62,13 @@ public class MainLayout extends AppLayout {
             username.setText(auth.getLogin());
         });
 
-        Icon userIcon = VaadinIcon.PIGGY_BANK.create();
+        Icon userIcon = VaadinIcon.USER_CHECK.create();
         userIcon.getStyle()
                 .set("width", "var(--lumo-icon-size-s)")
                 .set("height", "var(--lumo-icon-size-s)")
                 .set("color", "var(--lumo-contrast-60pct)");
 
-        Button logout = new Button("Выйти", VaadinIcon.GOLF.create(),
+        Button logout = new Button("Выйти", VaadinIcon.EXIT_O.create(),
                 e -> authenticationContext.logout());
         logout.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
         logout.getStyle()
@@ -95,14 +95,14 @@ public class MainLayout extends AppLayout {
                     new SideNavItem("Клиенты", "/clients-list", VaadinIcon.USER.create()),
                     new SideNavItem("Поставщики", "/organizations-list", VaadinIcon.OFFICE.create()),
                     new SideNavItem("Материалы", "/materials-list", VaadinIcon.CUBE.create()),
-                    new SideNavItem("Сотрудники", "/employees-list", VaadinIcon.ACCESSIBILITY.create()),
+                    new SideNavItem("Сотрудники", "/employees-list", VaadinIcon.USER_STAR.create()),
                     new SideNavItem("Поставки", "/supplies", VaadinIcon.TRUCK.create())
             );
         }
         else if (authenticationContext.hasRole("CLIENT")) {
             sideNav.addItem(
                     new SideNavItem("Мои заказы", "/my-orders", VaadinIcon.PAPERCLIP.create()),
-                    new SideNavItem("Создать заказ", "/add-order", VaadinIcon.PLUS.create())
+                    new SideNavItem("Мой профиль", "/client-profile", VaadinIcon.USER_CARD.create())
             );
         }
         else{
@@ -110,8 +110,8 @@ public class MainLayout extends AppLayout {
                     new SideNavItem("Заказы", "/orders-list",VaadinIcon.PAPERCLIP.create()),
                     new SideNavItem("Поставщики", "/organizations-list", VaadinIcon.OFFICE.create()),
                     new SideNavItem("Материалы", "/materials-list", VaadinIcon.CUBE.create()),
-                    new SideNavItem("Поставки", "/supplies", VaadinIcon.TRUCK.create())
-
+                    new SideNavItem("Поставки", "/supplies", VaadinIcon.TRUCK.create()),
+                    new SideNavItem("Клиенты", "/clients-list", VaadinIcon.USER.create())
             );
         }
         return sideNav;

@@ -61,8 +61,8 @@ public class MyOrdersView extends VerticalLayout {
                 .setSortable(true)
                 .setAutoWidth(true);
 
-        grid.addColumn(Order::getType)
-                .setHeader("Тип заказа")
+        grid.addColumn(Order::getDescription)
+                .setHeader("Описание заказа")
                 .setSortable(true)
                 .setAutoWidth(true);
 

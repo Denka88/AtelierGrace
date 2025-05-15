@@ -119,16 +119,16 @@ public class OrganizationMaterialView extends VerticalLayout {
             filterPopover.close();
         });
 
-        HorizontalLayout toolbar = new HorizontalLayout(filterButton);
+        Button addButton = new Button("Добавить поставку", VaadinIcon.PLUS.create());
+        addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        addButton.addClassName(LumoUtility.Margin.Bottom.LARGE);
+        
+        HorizontalLayout toolbar = new HorizontalLayout(filterButton, addButton);
         toolbar.setWidthFull();
         toolbar.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
         setupGrid();
         updateGrid();
-
-        Button addButton = new Button("Добавить поставку", VaadinIcon.PLUS.create());
-        addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        addButton.addClassName(LumoUtility.Margin.Bottom.LARGE);
 
         Popover addSupplied = new Popover();
         addSupplied.setModal(true);
@@ -208,14 +208,10 @@ public class OrganizationMaterialView extends VerticalLayout {
         addSupplied.add(formLayout);
         addSupplied.setTarget(addButton);
 
-        HorizontalLayout buttonLayout = new HorizontalLayout(addButton);
-        buttonLayout.setWidthFull();
-        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
-
         Div content = new Div(grid);
         content.setSizeFull();
 
-        add(toolbar, buttonLayout, content, addSupplied);
+        add(toolbar, content, addSupplied);
     }
 
     private void setupGrid(){

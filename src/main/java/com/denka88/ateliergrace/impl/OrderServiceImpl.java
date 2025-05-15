@@ -42,11 +42,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public Order save(Order order) {
-
-        Client currentClient = currentUserService.getCurrentClient()
-                .orElseThrow(() -> new IllegalStateException("Клиент не найден"));
-        
-        order.setClient(currentClient);
         order.setOrderDate(LocalDate.now());
         order.setStatus(Status.PROGRESS);
         
@@ -69,34 +64,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> findByClientId(Long clientId) {
         return orderRepo.findByClientId(clientId);
-    }
-
-    @Override
-    @Transactional
-    public void takeOrder(Order order) {
-        Employee currentEmployee = currentUserService.getCurrentEmployee()
-                        .orElseThrow(() -> new IllegalArgumentException("Сотрудник не найден"));
-        
-        boolean alreadyTaken = order.getOrderEmployees().stream()
-                .anyMatch(oe -> oe.getEmployee().getId().equals(currentEmployee.getId()));
-
-        if (!alreadyTaken) {
-            OrderEmployee orderEmployee = new OrderEmployee();
-            
-            orderEmployee.setOrder(order);
-            orderEmployee.setEmployee(currentEmployee);
-
-            orderEmployee.setDateOfReady(LocalDate.now().plusDays(14));
-            OrderEmployeeKey key = new OrderEmployeeKey();
-            key.setOrderId(order.getId());
-            key.setEmployeeId(currentEmployee.getId());
-            orderEmployee.setId(key);
-            
-            orderEmployeeService.save(orderEmployee);
-
-            order.getOrderEmployees().add(orderEmployee);
-            orderRepo.save(order);
-        }
     }
 
     @Override

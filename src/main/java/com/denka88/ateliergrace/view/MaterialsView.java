@@ -8,6 +8,7 @@ import com.denka88.ateliergrace.service.MaterialService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
@@ -44,7 +45,6 @@ public class MaterialsView extends VerticalLayout {
     private TextField editName = new TextField("Название");
     private IntegerField editValue = new IntegerField("Кол-во");
     private Button editButton = new Button("Сохранить", VaadinIcon.CHECK.create());
-
 
     public MaterialsView(MaterialService materialService, CurrentUserService currentUserService) {
         this.materialService = materialService;
@@ -218,11 +218,36 @@ public class MaterialsView extends VerticalLayout {
             }
         });
 
+        
+        
         if(currentUserService.getCurrentUserType().equals(UserType.ADMIN)) {
             Button deleteMenuItem = new Button("Удалить", VaadinIcon.TRASH.create());
             deleteMenuItem.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_TERTIARY);
             contextMenu.addItem(deleteMenuItem, e -> {
-                materialService.delete(e.getItem().map(Material::getId).orElse(null));
+                Dialog delete = new Dialog();
+                
+                Button confirmDelete = new Button("Удалить");
+                confirmDelete.addThemeVariants(ButtonVariant.LUMO_ERROR);
+                Button cancelDelete = new Button("Отмена");
+                cancelDelete.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+                HorizontalLayout buttonLayout = new HorizontalLayout(cancelDelete, confirmDelete);
+                buttonLayout.setWidthFull();
+                buttonLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
+                delete.add(buttonLayout);
+                delete.setHeaderTitle(String.format("Удалить материал \"%s\"", e.getItem().map(Material::getName).orElse(null)));
+                delete.open();
+                confirmDelete.addClickListener(event -> {
+                    materialService.delete(e.getItem().map(Material::getId).orElse(null));
+                    updateGrid();
+                    Notification.show("Материал удален")
+                            .setPosition(Notification.Position.TOP_END);
+                    delete.close();
+                });
+                
+                cancelDelete.addClickListener(event -> {
+                    delete.close();
+                });
                 updateGrid();
             });
         }

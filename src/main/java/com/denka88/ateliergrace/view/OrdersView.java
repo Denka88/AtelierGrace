@@ -3,11 +3,13 @@ package com.denka88.ateliergrace.view;
 import com.denka88.ateliergrace.MainLayout;
 import com.denka88.ateliergrace.model.*;
 import com.denka88.ateliergrace.service.*;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.contextmenu.MenuItem;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
@@ -51,7 +53,7 @@ public class OrdersView extends VerticalLayout {
     private FormLayout editForm = new FormLayout();
     private TextField id = new TextField("ID");
     private TextField editOrderName = new TextField("Название заказа");
-    private TextField editType = new TextField("Тип заказа");
+    private TextField editType = new TextField("Описание");
     private MultiSelectComboBox<Material> editMaterials = new MultiSelectComboBox<>("Материалы");
     private Button editButton = new Button("Сохранить", VaadinIcon.CHECK.create());
 
@@ -158,7 +160,14 @@ public class OrdersView extends VerticalLayout {
             filterPopover.close();
         });
 
-        HorizontalLayout toolbar = new HorizontalLayout(filterButton);
+        Button addOrder = new Button("Создать заказ", VaadinIcon.PLUS.create());
+        addOrder.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        addOrder.addClassName(LumoUtility.Margin.Bottom.LARGE);
+        addOrder.addClickListener(e->{
+            UI.getCurrent().navigate("/add-order");
+        });
+        
+        HorizontalLayout toolbar = new HorizontalLayout(filterButton, addOrder);
         toolbar.setWidthFull();
         toolbar.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
 
@@ -185,7 +194,7 @@ public class OrdersView extends VerticalLayout {
         closeClient.setDisableOnClick(true);
         closeClient.addClickListener(e->{
             clientDetails.setVisible(false);
-           closeClient.setEnabled(true);
+            closeClient.setEnabled(true);
         });
 
         setupGrid();
@@ -233,7 +242,7 @@ public class OrdersView extends VerticalLayout {
             Order updateOrder = orderService.findById(Long.valueOf(id.getValue())).orElse(null);
             if (updateOrder != null) {
                 updateOrder.setOrderName(editOrderName.getValue());
-                updateOrder.setType(editType.getValue());
+                updateOrder.setDescription(editType.getValue());
                 updateOrder.setMaterials(new HashSet<>(editMaterials.getSelectedItems()));
                 orderService.update(updateOrder);
                 updateGrid();
@@ -246,7 +255,7 @@ public class OrdersView extends VerticalLayout {
         grid.addCellFocusListener(e -> {
             id.setValue(String.valueOf(e.getItem().map(Order::getId).orElse(null)));
             editOrderName.setValue(e.getItem().map(Order::getOrderName).orElse("Не доступно"));
-            editType.setValue(e.getItem().map(Order::getType).orElse("Не доступно"));
+            editType.setValue(e.getItem().map(Order::getDescription).orElse("Не доступно"));
             editMaterials.clear();
             if (e.getItem().isPresent()) {
                 editMaterials.select(e.getItem().get().getMaterials());
@@ -255,7 +264,7 @@ public class OrdersView extends VerticalLayout {
             String detailsId = String.valueOf(e.getItem().map(Order::getId).orElse(null));
             String detailsClient = String.valueOf(e.getItem().map(Order::getClient).orElse(null));
             String detailsOrderName = String.valueOf(e.getItem().map(Order::getOrderName).orElse(null));
-            String detailsType = String.valueOf(e.getItem().map(Order::getType).orElse(null));
+            String detailsDescription = String.valueOf(e.getItem().map(Order::getDescription).orElse(null));
             String detailsOrderDate = String.valueOf(e.getItem().map(Order::getOrderDate).orElse(null));
             String detailsCost = String.valueOf(e.getItem().map(Order::getCost).orElse(null));
             String detailsStatus = String.valueOf(e.getItem().map(Order::getStatus).orElse(null));
@@ -270,8 +279,8 @@ public class OrdersView extends VerticalLayout {
             
             String clientDetailsContainer = String.format("ID: %s%nФамилия: %s%nИмя: %s%nОтчество: %s%nНомер телефона: %s%n", 
                     id, surname, name, patronymic, phone);
-            String areaContainer = String.format("ID: %s%nЗаказчик: %s%nНазвание заказа: %s%nТип заказа: %s%nДата создания: %s%n" +
-                    "Цена: %s%nСтатус заказа: %s%nСотрудники: %s%nМатериалы: %s%n", detailsId, detailsClient, detailsOrderName, detailsType, detailsOrderDate, detailsCost, detailsStatus, detailsEmployees, detailsMaterials);
+            String areaContainer = String.format("ID: %s%nЗаказчик: %s%nНазвание заказа: %s%nОписание: %s%nДата создания: %s%n" +
+                    "Цена: %s%nСтатус заказа: %s%nСотрудники: %s%nМатериалы: %s%n", detailsId, detailsClient, detailsOrderName, detailsDescription, detailsOrderDate, detailsCost, detailsStatus, detailsEmployees, detailsMaterials);
             
             clientDetails.setValue(clientDetailsContainer);
             detailsText.setValue(areaContainer);
@@ -291,6 +300,7 @@ public class OrdersView extends VerticalLayout {
 
         editForm.add(formHeader, id, editOrderName, editType, editMaterials, editButton);
         editForm.setVisible(false);
+        
         
         HorizontalLayout formAndDetails = new HorizontalLayout(editForm, detailsText, clientDetails);
         formAndDetails.setWidthFull();
@@ -330,8 +340,8 @@ public class OrdersView extends VerticalLayout {
                 .setSortable(true)
                 .setAutoWidth(true);
 
-        grid.addColumn(Order::getType)
-                .setHeader("Тип заказа")
+        grid.addColumn(Order::getDescription)
+                .setHeader("Описание заказа")
                 .setSortable(true)
                 .setAutoWidth(true);
 
@@ -406,22 +416,43 @@ public class OrdersView extends VerticalLayout {
                 editForm.setVisible(true);
                 id.setValue(String.valueOf(e.getItem().map(Order::getId).orElse(null)));
                 editOrderName.setValue(e.getItem().map(Order::getOrderName).orElse(null));
-                editType.setValue(e.getItem().map(Order::getType).orElse(null));
+                editType.setValue(e.getItem().map(Order::getDescription).orElse(null));
                 editMaterials.clear();
                 if (e.getItem().isPresent()) {
                     editMaterials.select(e.getItem().get().getMaterials());
                 }
             }
         });
-
-        if(currentUserService.getCurrentUserType() == UserType.ADMIN){
+        
+        if(currentUserService.getCurrentUserType().equals(UserType.ADMIN)){
             Button deleteMenuItem = new Button("Удалить", VaadinIcon.TRASH.create());
             deleteMenuItem.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_TERTIARY);
             contextMenu.addItem(deleteMenuItem, e->{
-                orderService.delete(e.getItem().map(Order::getId).orElse(null));
-                updateGrid();
-                Notification.show("Заказ удален")
-                        .setPosition(Notification.Position.TOP_END);
+                Dialog delete = new Dialog();
+
+                Button confirmDelete = new Button("Удалить");
+                confirmDelete.addThemeVariants(ButtonVariant.LUMO_ERROR);
+                Button cancelDelete = new Button("Отмена");
+                cancelDelete.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+                HorizontalLayout buttonLayout = new HorizontalLayout(cancelDelete, confirmDelete);
+                buttonLayout.setWidthFull();
+                buttonLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
+                delete.add(buttonLayout);
+                delete.setHeaderTitle(String.format("Удалить заказ \"%s\"", e.getItem().map(Order::getOrderName).orElse(null)));
+                delete.open();
+                
+                confirmDelete.addClickListener(event -> {
+                    orderService.delete(e.getItem().map(Order::getId).orElse(null));
+                    updateGrid();
+                    Notification.show("Заказ удален")
+                            .setPosition(Notification.Position.TOP_END);
+                    delete.close();
+                });
+                
+                cancelDelete.addClickListener(event -> {
+                    delete.close();
+                });
             });
         }
 
@@ -432,11 +463,6 @@ public class OrdersView extends VerticalLayout {
                 actions.setPadding(false);
                 actions.setWidthFull();
 
-                Button takeOrderBtn = new Button("Взять заказ", VaadinIcon.HANDS_UP.create());
-                takeOrderBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-                takeOrderBtn.setWidthFull();
-                takeOrderBtn.setEnabled(order.getStatus().equals(Status.PROGRESS));
-
                 Popover setCost = new Popover();
                 setCost.setWidth("300px");
                 setCost.addClassName(LumoUtility.Padding.LARGE);
@@ -446,40 +472,11 @@ public class OrdersView extends VerticalLayout {
                 NumberField cost = new NumberField("Стоимость заказа");
                 cost.setWidthFull();
                 cost.setMin(0);
-
-                Button confirm = new Button("Подтвердить", VaadinIcon.CHECK.create());
-                confirm.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-                confirm.setWidthFull();
-
-                FormLayout popoverForm = new FormLayout(cost, confirm);
-                popoverForm.setWidthFull();
-                setCost.add(popoverForm);
-                setCost.setTarget(takeOrderBtn);
-
-                confirm.addClickListener(e -> {
-                    if (cost.isEmpty()) {
-                        Notification.show("Укажите стоимость")
-                                .setPosition(Notification.Position.TOP_END);
-                        return;
-                    }
-                    order.setCost(cost.getValue().floatValue());
-                    orderService.takeOrder(order);
-                    updateGrid();
-                    setCost.setVisible(false);
-                    Notification.show("Вы взяли заказ #" + order.getId())
-                            .setPosition(Notification.Position.TOP_END);
-                });
-
-                boolean alreadyTaken = order.getOrderEmployees().stream()
-                        .anyMatch(oe -> oe.getEmployee().getId().equals(currentUserService.getCurrentUserId()));
-                takeOrderBtn.setVisible(!alreadyTaken);
-
-                // Кнопка "Завершить"
+                
                 Button completeBtn = new Button("Завершить", VaadinIcon.CHECK_CIRCLE.create());
                 completeBtn.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
                 completeBtn.setWidthFull();
-                completeBtn.setVisible(alreadyTaken);
-                completeBtn.setEnabled(alreadyTaken && order.getStatus() != Status.COMPLETED);
+                completeBtn.setEnabled(order.getStatus() != Status.COMPLETED);
                 completeBtn.addClickListener(e -> {
                     orderService.completeOrder(order.getId());
                     updateGrid();
@@ -487,7 +484,7 @@ public class OrdersView extends VerticalLayout {
                             .setPosition(Notification.Position.TOP_END);
                 });
 
-                actions.add(takeOrderBtn, completeBtn);
+                actions.add(completeBtn);
                 return actions;
             })).setHeader("Действия").setAutoWidth(true).setFlexGrow(0);
         }

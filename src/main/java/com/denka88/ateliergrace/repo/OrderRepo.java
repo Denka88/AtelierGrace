@@ -14,5 +14,7 @@ public interface OrderRepo extends JpaRepository<Order, Long> {
 
     @EntityGraph(attributePaths = {"orderEmployees.employee", "materials"})
     List<Order> findByClientId(Long clientId);
-    
+
+    @Query("SELECT o FROM Order o JOIN o.materials m WHERE m.id = :materialId")
+    List<Order> findByMaterialsId(Long materialId);
 }

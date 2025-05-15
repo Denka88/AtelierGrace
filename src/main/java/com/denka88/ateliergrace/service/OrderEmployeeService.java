@@ -17,4 +17,8 @@ public interface OrderEmployeeService {
     void update(OrderEmployee orderEmployee);
     
     void setReadyDate(Long orderId, Long employeeId, LocalDate readyDate);
+
+    void createAssignment(Long orderId, Long employeeId, LocalDate readyDate);
+    
+    Long getInProgressCount(Long employeeId);
 }

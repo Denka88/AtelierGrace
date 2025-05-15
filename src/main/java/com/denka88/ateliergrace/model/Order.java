@@ -19,7 +19,7 @@ public class Order {
     private Client client;
 
     private String orderName;
-    private String type;
+    private String description;
     private LocalDate orderDate;
     private float cost;
     
@@ -37,11 +37,11 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderEmployee> orderEmployees;
 
-    public Order(Long id, Client client, String orderName, String type, LocalDate orderDate, float cost, Status status, Set<Material> materials, Set<OrderEmployee> orderEmployees) {
+    public Order(Long id, Client client, String orderName, String description, LocalDate orderDate, float cost, Status status, Set<Material> materials, Set<OrderEmployee> orderEmployees) {
         this.id = id;
         this.client = client;
         this.orderName = orderName;
-        this.type = type;
+        this.description = description;
         this.orderDate = orderDate;
         this.cost = cost;
         this.status = status;
@@ -77,12 +77,12 @@ public class Order {
         this.orderName = orderName;
     }
 
-    public String getType() {
-        return type;
+    public String getDescription() {
+        return description;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setDescription(String type) {
+        this.description = type;
     }
 
     public LocalDate getOrderDate() {
