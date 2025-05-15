@@ -96,13 +96,15 @@ public class MainLayout extends AppLayout {
                     new SideNavItem("Поставщики", "/organizations-list", VaadinIcon.OFFICE.create()),
                     new SideNavItem("Материалы", "/materials-list", VaadinIcon.CUBE.create()),
                     new SideNavItem("Сотрудники", "/employees-list", VaadinIcon.USER_STAR.create()),
-                    new SideNavItem("Поставки", "/supplies", VaadinIcon.TRUCK.create())
+                    new SideNavItem("Поставки", "/supplies", VaadinIcon.TRUCK.create()),
+                    new SideNavItem("О приложении", "/about", VaadinIcon.INFO_CIRCLE_O.create())
             );
         }
         else if (authenticationContext.hasRole("CLIENT")) {
             sideNav.addItem(
                     new SideNavItem("Мои заказы", "/my-orders", VaadinIcon.PAPERCLIP.create()),
-                    new SideNavItem("Мой профиль", "/client-profile", VaadinIcon.USER_CARD.create())
+                    new SideNavItem("Мой профиль", "/client-profile", VaadinIcon.USER_CARD.create()),
+                    new SideNavItem("О приложении", "/about", VaadinIcon.INFO_CIRCLE_O.create())
             );
         }
         else{
@@ -111,7 +113,9 @@ public class MainLayout extends AppLayout {
                     new SideNavItem("Поставщики", "/organizations-list", VaadinIcon.OFFICE.create()),
                     new SideNavItem("Материалы", "/materials-list", VaadinIcon.CUBE.create()),
                     new SideNavItem("Поставки", "/supplies", VaadinIcon.TRUCK.create()),
-                    new SideNavItem("Клиенты", "/clients-list", VaadinIcon.USER.create())
+                    new SideNavItem("Клиенты", "/clients-list", VaadinIcon.USER.create()),
+                    new SideNavItem("О приложении", "/about", VaadinIcon.INFO_CIRCLE_O.create())
+                    
             );
         }
         return sideNav;
