@@ -53,7 +53,7 @@ public class OrdersView extends VerticalLayout {
     private FormLayout editForm = new FormLayout();
     private TextField id = new TextField("ID");
     private TextField editOrderName = new TextField("Название заказа");
-    private TextField editType = new TextField("Тип заказа");
+    private TextField editType = new TextField("Описание");
     private MultiSelectComboBox<Material> editMaterials = new MultiSelectComboBox<>("Материалы");
     private Button editButton = new Button("Сохранить", VaadinIcon.CHECK.create());
 
@@ -279,7 +279,7 @@ public class OrdersView extends VerticalLayout {
             
             String clientDetailsContainer = String.format("ID: %s%nФамилия: %s%nИмя: %s%nОтчество: %s%nНомер телефона: %s%n", 
                     id, surname, name, patronymic, phone);
-            String areaContainer = String.format("ID: %s%nЗаказчик: %s%nНазвание заказа: %s%nТип заказа: %s%nДата создания: %s%n" +
+            String areaContainer = String.format("ID: %s%nЗаказчик: %s%nНазвание заказа: %s%nОписание: %s%nДата создания: %s%n" +
                     "Цена: %s%nСтатус заказа: %s%nСотрудники: %s%nМатериалы: %s%n", detailsId, detailsClient, detailsOrderName, detailsDescription, detailsOrderDate, detailsCost, detailsStatus, detailsEmployees, detailsMaterials);
             
             clientDetails.setValue(clientDetailsContainer);
