@@ -45,7 +45,6 @@ public class MainLayout extends AppLayout {
         title.addClickListener(e -> title.getStyle().set("color", "var(--lumo-primary-color-50pct)"));
         title.addClickListener(e -> title.getStyle().set("color", "var(--lumo-primary-text-color)"));
 
-        // Поле поиска
         TextField searchField = new TextField();
         searchField.setPlaceholder("Поиск...");
         searchField.setWidth("300px");
@@ -90,7 +89,6 @@ public class MainLayout extends AppLayout {
 
         userControls.add(userIcon, username, logout);
 
-        // Добавляем поле поиска перед элементами управления пользователем
         navbarRight.add(searchField, userControls);
 
         SideNav nav = getSideNav(authenticationContext);

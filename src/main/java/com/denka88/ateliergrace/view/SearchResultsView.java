@@ -53,7 +53,6 @@ public class SearchResultsView extends VerticalLayout implements HasUrlParameter
         String searchQuery = parameter.toLowerCase();
         add(new H2("Результаты поиска по запросу: \"" + searchQuery + "\""));
 
-        // Поиск по заказам
         List<Order> orders = orderService.findAll().stream()
                 .filter(order -> order.getOrderName().toLowerCase().contains(searchQuery) ||
                         order.getDescription().toLowerCase().contains(searchQuery))
@@ -136,10 +135,8 @@ public class SearchResultsView extends VerticalLayout implements HasUrlParameter
             }).setHeader("Материалы");
             orderGrid.setItems(orders);
             add(orderGrid);
-            // Здесь можно добавить Grid для отображения найденных заказов
         }
 
-        // Поиск по клиентам
         List<Client> clients = clientService.findAll().stream()
                 .filter(client -> client.getName().toLowerCase().contains(searchQuery) ||
                         client.getSurname().toLowerCase().contains(searchQuery) ||
@@ -184,7 +181,6 @@ public class SearchResultsView extends VerticalLayout implements HasUrlParameter
                     .setAutoWidth(true);
             clientsGrid.setItems(clients);
             add(clientsGrid);
-            // Здесь можно добавить Grid для отображения найденных клиентов
         }
         
         List<Employee> employees = employeeService.findAll().stream()
