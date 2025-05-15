@@ -15,6 +15,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Layout;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.spring.security.AuthenticationContext;
@@ -44,6 +45,17 @@ public class MainLayout extends AppLayout {
         title.addClickListener(e -> title.getStyle().set("color", "var(--lumo-primary-color-50pct)"));
         title.addClickListener(e -> title.getStyle().set("color", "var(--lumo-primary-text-color)"));
 
+        // Поле поиска
+        TextField searchField = new TextField();
+        searchField.setPlaceholder("Поиск...");
+        searchField.setWidth("300px");
+        searchField.setPrefixComponent(VaadinIcon.SEARCH.create());
+        searchField.addValueChangeListener(e -> {
+            if (e.getValue() != null && !e.getValue().trim().isEmpty()) {
+                UI.getCurrent().navigate("search/" + e.getValue().trim());
+            }
+        });
+
         HorizontalLayout navbarRight = new HorizontalLayout();
         navbarRight.setAlignItems(FlexComponent.Alignment.CENTER);
         navbarRight.getStyle().set("margin-left", "auto").set("margin-right", "5px");
@@ -52,7 +64,7 @@ public class MainLayout extends AppLayout {
         userControls.setSpacing(false);
         userControls.setAlignItems(FlexComponent.Alignment.CENTER);
         userControls.addClassName(LumoUtility.Gap.SMALL);
-        
+
         Span username = new Span();
         username.getStyle()
                 .set("font-weight", "500")
@@ -77,16 +89,17 @@ public class MainLayout extends AppLayout {
                 .set("padding", "0");
 
         userControls.add(userIcon, username, logout);
-        navbarRight.add(userControls);
+
+        // Добавляем поле поиска перед элементами управления пользователем
+        navbarRight.add(searchField, userControls);
+
         SideNav nav = getSideNav(authenticationContext);
         Scroller scroller = new Scroller(nav);
         scroller.setClassName(LumoUtility.Padding.SMALL);
 
         addToDrawer(scroller);
-
         addToNavbar(toggle, title, navbarRight);
     }
-
     private SideNav getSideNav(AuthenticationContext authenticationContext) {
         SideNav sideNav = new SideNav();
         if (authenticationContext.hasRole("ADMIN")) {
