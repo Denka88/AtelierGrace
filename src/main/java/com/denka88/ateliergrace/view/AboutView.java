@@ -51,12 +51,19 @@ public class AboutView extends VerticalLayout {
                 createModulesContent()
         );
 
+        Details authorSection = createSection(
+                "Автор приложения",
+                VaadinIcon.USER,
+                createAuthorContent()
+        );
+
         add(
                 title,
                 description,
                 functionalitySection,
                 technicalSection,
-                modulesSection
+                modulesSection,
+                authorSection
         );
     }
 
@@ -131,6 +138,24 @@ public class AboutView extends VerticalLayout {
         section.add(content);
         section.addClassName(LumoUtility.Margin.Bottom.MEDIUM);
         return section;
+    }
+
+    private Component createAuthorContent() {
+        VerticalLayout content = new VerticalLayout();
+        content.setSpacing(true);
+        content.setPadding(false);
+
+        Paragraph authorInfo = new Paragraph(
+                "Разработчик приложения: Григорьев Денис Владиславович. Псевдоним: Denka88. " +
+                        "Для связи или получения дополнительной информации используйте следующие контакты:"
+        );
+
+        UnorderedList contactsList = new UnorderedList(
+                new ListItem("Телефон: +7 (902) 758-00-03")
+        );
+
+        content.add(authorInfo, contactsList);
+        return content;
     }
 
 
