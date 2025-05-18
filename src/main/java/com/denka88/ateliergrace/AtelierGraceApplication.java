@@ -1,6 +1,5 @@
 package com.denka88.ateliergrace;
 
-import com.vaadin.flow.component.page.Push;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
