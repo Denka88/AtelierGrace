@@ -15,7 +15,7 @@ import jakarta.annotation.security.PermitAll;
 @Route(value = "main", layout = MainLayout.class)
 @RouteAlias(value = "index", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
-@PageTitle("MAIN")
+@PageTitle("Главная")
 @PermitAll
 public class MainView extends VerticalLayout {
     
