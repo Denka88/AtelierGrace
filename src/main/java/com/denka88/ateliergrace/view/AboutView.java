@@ -144,7 +144,7 @@ public class AboutView extends VerticalLayout {
         VerticalLayout content = new VerticalLayout();
         content.setSpacing(true);
         content.setPadding(false);
-
+ 
         Paragraph authorInfo = new Paragraph(
                 "Разработчик приложения: Григорьев Денис Владиславович. Псевдоним: Denka88. " +
                         "Для связи или получения дополнительной информации используйте следующие контакты:"
